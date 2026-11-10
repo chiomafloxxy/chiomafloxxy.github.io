@@ -1,0 +1,41 @@
+{
+  "hero_eyebrow": "C.Zara Product Catalogue",
+  "hero_title_first": "Our",
+  "hero_title_accent": "Products",
+  "hero_description": "Explore our selection of natural foods and pantry essentials. Call or message us for today's prices, sizes, and availability.",
+  "gallery_note": "Prices and pack sizes may change. Call or WhatsApp us to confirm today's price, availability, and delivery before placing your order.",
+  "cta_eyebrow": "A Personal Touch",
+  "cta_title_first": "Ready to place",
+  "cta_title_accent": "an order?",
+  "cta_description": "Speak with Florence to confirm your selection, today's price, and delivery options.",
+  "products": [
+    {
+      "category": "honey",
+      "title": "Natural Honey",
+      "description": "A naturally sweet pantry favourite for everyday use, sharing, and thoughtful food hampers.",
+      "image": "assets/images/products/natural-honey.jpg",
+      "price": "₦5,160 / 400g"
+    },
+    {
+      "category": "nuts",
+      "title": "Premium Cashew Nuts",
+      "description": "A satisfying snack and a versatile addition to treats, recipes, and gift selections.",
+      "image": "assets/images/products/cashew-nuts.jpg",
+      "price": "₦6,500 / 400g"
+    },
+    {
+      "category": "nuts",
+      "title": "Natural Groundnuts",
+      "description": "A familiar pantry staple to enjoy on its own or add to everyday meals and snacks.",
+      "image": "assets/images/products/groundnuts.jpg",
+      "price": "₦4,000 / 75cl bottle"
+    },
+    {
+      "category": "oil",
+      "title": "Red Palm Oil",
+      "description": "A richly coloured cooking staple for soups, stews, and traditional dishes.",
+      "image": "assets/images/products/red-palm-oil.jpg",
+      "price": "₦4,500 / 1.5 litre bottle"
+    }
+  ]
+}
