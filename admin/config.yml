@@ -2,11 +2,11 @@
 
 backend:
   name: github
-  repo: chiomafloxxy/czara
+  repo: chiomafloxxy/chiomafloxxy.github.io
   branch: main
 
 media_folder: /assets/images/products
-public_folder: /czara/assets/images/products
+public_folder: /assets/images/products
 
 collections:
   - name: site_pages
