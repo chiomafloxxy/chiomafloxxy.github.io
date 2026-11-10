@@ -96,10 +96,8 @@
 .site-contact-icon.whatsapp { color: #128c7e; background: #e5f7ed; }
 .site-contact-link > span:nth-child(2) { flex: 1; }
 .site-contact-link strong, .site-contact-link small { display: block; }
-.site-contact-link small { color: var(--text-light); font-size: .8rem; }
+.site-contact-link small { color: var(--text-light); font-size: .8rem; overflow-wrap: anywhere; }
 .site-contact-link > i:last-child { color: var(--text-faint); font-size: .75rem; }
-.site-static-note { color: var(--text-light); font-size: .78rem; line-height: 1.6; }
-.site-static-note i { color: var(--honey-gold); }
 .site-delivery { background: var(--cream-dark); }
 .site-area-list { display: flex; justify-content: center; flex-wrap: wrap; gap: .65rem; }
 .site-area-list span { padding: .6rem 1rem; border: 1px solid rgba(212,136,42,.2); border-radius: var(--radius-full); color: var(--text-mid); background: white; font-size: .82rem; font-weight: 600; }
