@@ -115,44 +115,25 @@ button { cursor: pointer; }
 /* ============================================================
    FLOATING ELEMENTS
    ============================================================ */
-.float-whatsapp {
-  position: fixed; bottom: 92px; right: 20px; z-index: 950;
-  width: 56px; height: 56px; border-radius: 50%;
-  background: linear-gradient(135deg, #25D366, #128C7E);
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 6px 30px rgba(37,211,102,0.45), 0 2px 10px rgba(0,0,0,0.15);
-  animation: floatBounce 3.5s ease-in-out infinite;
-  transition: var(--transition);
-}
-.float-whatsapp::before {
-  content: ''; position: absolute; inset: -3px; border-radius: 50%;
-  border: 2px solid rgba(37,211,102,0.3); animation: waPulse 2s ease-in-out infinite;
-}
-.float-whatsapp:hover { transform: scale(1.12) translateY(-4px); box-shadow: 0 14px 40px rgba(37,211,102,0.6); }
-.float-whatsapp i { color: white; font-size: 1.65rem; }
-
 .float-scroll-top {
-  position: fixed; bottom: 24px; right: 25px; z-index: 950;
-  width: 46px; height: 46px; border-radius: 50%;
+  position: fixed; bottom: 20px; right: 20px; z-index: 950;
+  width: 36px; height: 36px; border-radius: 50%;
   background: linear-gradient(135deg, var(--honey-gold), var(--honey-light));
   display: flex; align-items: center; justify-content: center;
   box-shadow: var(--shadow-gold); cursor: pointer;
   opacity: 0; transform: translateY(20px) scale(0.8);
-  transition: var(--transition); border: none;
+  transition: var(--transition); border: none; pointer-events: none;
 }
-.float-scroll-top.visible { opacity: 1; transform: translateY(0) scale(1); }
+.float-scroll-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
 .float-scroll-top:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 12px 30px rgba(212,136,42,0.5); }
-.float-scroll-top i { color: var(--brown-dark); font-size: 1rem; font-weight: 900; }
+.float-scroll-top i { color: var(--brown-dark); font-size: .8rem; font-weight: 900; }
 
 /* When the cart sidebar is open, fade floats out of the way so
    they never visually compete with the checkout button. */
-.cart-sidebar.open ~ .float-whatsapp,
 .cart-sidebar.open ~ .float-scroll-top {
   opacity: 0; pointer-events: none; transform: translateX(20px) scale(0.85);
 }
 
-@keyframes floatBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-@keyframes waPulse { 0%,100%{transform:scale(1);opacity:0.6} 50%{transform:scale(1.15);opacity:0} }
 
 /* ============================================================
    NAVBAR
@@ -909,11 +890,11 @@ footer { background: #150A04; color: rgba(255,255,255,0.68); }
   width: 120%; height: 100px;
   background: var(--cream); clip-path: ellipse(60% 100% at 50% 100%);
 }
-.page-hero h1 {
+.page-hero :is(h1, h2.page-hero-title) {
   font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 3.6rem);
   font-weight: 900; color: white; margin-bottom: 1rem; position: relative;
 }
-.page-hero h1 .gold { color: var(--honey-gold); font-style: italic; }
+.page-hero :is(h1, h2.page-hero-title) .gold { color: var(--honey-gold); font-style: italic; }
 .page-hero p { color: rgba(255,255,255,0.72); font-size: 1rem; max-width: 580px; margin: 0 auto 1.5rem; position: relative; line-height: 1.8; }
 .breadcrumb { display: flex; align-items: center; gap: 0.5rem; justify-content: center; font-size: 0.78rem; position: relative; }
 .breadcrumb a { color: rgba(212,136,42,0.85); }

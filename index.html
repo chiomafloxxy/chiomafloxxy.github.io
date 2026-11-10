@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="C.Zara Enterprise brings natural honey, nuts, palm oil and wholesome foods to families in Abuja, Nigeria.">
   <meta name="theme-color" content="#2c1810">
-  <title>C.Zara Enterprise | Natural Goodness for Your Table</title>
+  <title>C.Zara Enterprise | Natural Honey, Nuts &amp; Palm Oil in Abuja</title>
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,19 +14,19 @@
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/site.css">
 </head>
-<body data-cms-page="home">
+<body>
 <header class="navbar" id="mainNav">
   <div class="nav-inner">
-    <a class="nav-logo" href="index.html" aria-label="C.Zara Enterprise home">
+    <a class="nav-logo" href="#home" aria-label="C.Zara Enterprise home">
       <span class="nav-logo-icon">CZ</span>
       <span class="nav-logo-text"><span class="brand-main">C.Zara</span><span class="brand-sub">Enterprise</span></span>
     </a>
     <nav aria-label="Main navigation">
       <ul class="nav-links">
-        <li><a class="nav-link active" href="index.html" aria-current="page">Home</a></li>
-        <li><a class="nav-link" href="about.html">About Us</a></li>
-        <li><a class="nav-link" href="gallery.html">Products</a></li>
-        <li><a class="nav-link" href="contact.html">Contact</a></li>
+        <li><a class="nav-link" href="#home" data-nav="home">Home</a></li>
+        <li><a class="nav-link" href="#about" data-nav="about">About</a></li>
+        <li><a class="nav-link" href="#products" data-nav="products">Products</a></li>
+        <li><a class="nav-link" href="#contact" data-nav="contact">Contact</a></li>
       </ul>
     </nav>
     <div class="nav-actions">
@@ -39,15 +39,16 @@
 <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation" aria-hidden="true" inert>
   <button class="mobile-close" id="mobileCloseBtn" type="button" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
   <ul>
-    <li><a class="mobile-nav-link active" href="index.html" aria-current="page"><i class="fa-solid fa-house"></i> Home</a></li>
-    <li><a class="mobile-nav-link" href="about.html"><i class="fa-solid fa-leaf"></i> About Us</a></li>
-    <li><a class="mobile-nav-link" href="gallery.html"><i class="fa-solid fa-images"></i> Products</a></li>
-    <li><a class="mobile-nav-link" href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+    <li><a class="mobile-nav-link" href="#home" data-nav="home"><i class="fa-solid fa-house"></i> Home</a></li>
+    <li><a class="mobile-nav-link" href="#about" data-nav="about"><i class="fa-solid fa-leaf"></i> About</a></li>
+    <li><a class="mobile-nav-link" href="#products" data-nav="products"><i class="fa-solid fa-images"></i> Products</a></li>
+    <li><a class="mobile-nav-link" href="#contact" data-nav="contact"><i class="fa-solid fa-envelope"></i> Contact</a></li>
   </ul>
   <a class="mobile-contact-strip" href="https://wa.me/2348060561101" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp</a>
 </nav>
 
 <main>
+<div class="page-section" id="home" data-cms-page="home">
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero-particles" aria-hidden="true"></div>
     <div class="hero-inner">
@@ -57,8 +58,8 @@
         <p class="hero-tagline" data-cms="hero_tagline">Quality You Can Trust, Goodness You Can Taste</p>
         <p class="hero-desc" data-cms="hero_description">C.Zara Enterprise brings wholesome natural foods — from pure honey and premium nuts to red palm oil — to families in Abuja and beyond.</p>
         <div class="hero-cta">
-          <a class="btn-primary" href="about.html"><i class="fa-solid fa-leaf"></i> Discover Our Story</a>
-          <a class="btn-glass" href="contact.html"><i class="fa-solid fa-envelope"></i> Get in Touch</a>
+          <a class="btn-primary" href="#products"><i class="fa-solid fa-jar"></i> Browse Products</a>
+          <a class="btn-glass" href="#about"><i class="fa-solid fa-leaf"></i> Our Story</a>
         </div>
       </div>
       <div class="hero-visual" aria-hidden="true">
@@ -106,44 +107,95 @@
     </div>
   </section>
 
-  <section class="section-sm site-offerings">
-    <div class="container">
-      <div class="section-header fade-up">
-        <div class="eyebrow">Our Selection</div>
-        <h2 class="section-title">Quality for <span class="italic">Everyday Living</span></h2>
-        <p class="section-desc">Discover a selection of natural foods and pantry essentials. Contact us to confirm current availability and pricing.</p>
-      </div>
-      <div class="site-offering-grid">
-        <article class="site-offering fade-up"><img src="assets/images/products/natural-honey.jpg" alt="Bottle of natural honey" loading="lazy"><div><h3>Natural Honey</h3><p>A naturally sweet pantry favourite, selected for everyday enjoyment.</p><a href="gallery.html">View product details <i class="fa-solid fa-arrow-right"></i></a></div></article>
-        <article class="site-offering fade-up"><img src="assets/images/products/cashew-nuts.jpg" alt="Cashew nuts in a clear bottle" loading="lazy"><div><h3>Premium Cashew Nuts</h3><p>A satisfying snack and a thoughtful addition to sharing and gifting.</p><a href="gallery.html">View product details <i class="fa-solid fa-arrow-right"></i></a></div></article>
-        <article class="site-offering fade-up"><img src="assets/images/products/groundnuts.jpg" alt="Bottles of natural groundnuts" loading="lazy"><div><h3>Natural Groundnuts</h3><p>A familiar favourite for snacks, recipes, and everyday meals.</p><a href="gallery.html">View product details <i class="fa-solid fa-arrow-right"></i></a></div></article>
-        <article class="site-offering fade-up"><img src="assets/images/products/red-palm-oil.jpg" alt="Bottles of red palm oil" loading="lazy"><div><h3>Red Palm Oil</h3><p>A richly coloured kitchen staple for soups, stews, and traditional dishes.</p><a href="gallery.html">View product details <i class="fa-solid fa-arrow-right"></i></a></div></article>
-      </div>
+</div>
+<div class="page-section" id="about" data-cms-page="about">
+  <section class="page-hero"><div class="eyebrow" data-cms="hero_eyebrow">Our Story</div><h2 class="page-hero-title"><span data-cms="hero_title_first">About</span> <span class="gold" data-cms="hero_title_accent">C.Zara Enterprise</span></h2><p data-cms="hero_description">Bringing nature's best to your table — from Kurudu, FCT Abuja.</p></section>
+  <section class="section" style="background:var(--cream)"><div class="container site-story-grid">
+    <div class="site-founder-art fade-left"><img class="site-founder-photo-main" src="assets/images/florence-chioma.jpg" alt="Portrait of Florence Chioma, founder of C.Zara Enterprise" width="800" height="1010" loading="lazy">
+      <div class="site-founded"><strong>2021</strong><span>Founded by Floxxy</span></div>
     </div>
-  </section>
-
-  <section class="section site-home-cta">
-    <div class="container fade-up">
-      <div class="eyebrow" data-cms="cta_eyebrow">C.Zara Enterprise · Abuja</div>
-      <h2><span data-cms="cta_title_first">Bringing Nature's Best</span> <span class="italic" data-cms="cta_title_accent">to Your Table</span></h2>
-      <p data-cms="cta_description">Learn more about our story or get in touch with Florence for enquiries.</p>
-      <div class="hero-cta">
-        <a class="btn-primary" href="about.html">Meet C.Zara</a>
-        <a class="btn-glass" href="gallery.html">Explore Products</a>
-      </div>
+    <div class="fade-right"><div class="eyebrow" data-cms="founder_eyebrow">The Person Behind the Brand</div><h2 class="section-title site-left-title"><span data-cms="founder_name">Florence Chioma</span> — <span class="italic" data-cms="founder_nickname">“Floxxy”</span></h2>
+      <p data-cms="founder_paragraph_1">Florence Chioma, warmly known as Floxxy, is the founder of C.Zara Enterprise. Based in Kurudu, FCT, Abuja, she built the business around a simple belief: families deserve access to wholesome food they can feel good about.</p>
+      <p data-cms="founder_paragraph_2">C.Zara began with a personal commitment to carefully sourced honey and quality nuts. The business has grown through customer relationships and a continued focus on quality, care, and personal service.</p>
+      <p data-cms="founder_paragraph_3">Today, C.Zara serves households and businesses in Abuja and beyond with natural honey, nuts, palm oil, foodstuffs, and gift selections.</p>
+      <a class="btn-primary site-inline-cta" href="#contact"><i class="fa-solid fa-envelope"></i> Contact C.Zara</a>
     </div>
-  </section>
+  </div></section>
+  <section class="section" style="background:var(--cream-dark)"><div class="container">
+    <div class="section-header fade-up"><div class="eyebrow" data-cms="mission_eyebrow">What Drives Us</div><h2 class="section-title"><span data-cms="mission_title_first">Our</span> <span class="italic" data-cms="mission_title_accent">Mission &amp; Values</span></h2><p class="section-desc" data-cms="mission_description">We bring care, integrity, and quality to the foods we share.</p></div>
+    <div class="site-value-grid">
+      <article class="site-value-card fade-up"><span><i class="fa-solid fa-bullseye"></i></span><h3>Our Mission</h3><p data-cms="mission_text">To make quality natural food products accessible to households and businesses, with care and integrity in every interaction.</p></article>
+      <article class="site-value-card fade-up"><span><i class="fa-solid fa-eye"></i></span><h3>Our Vision</h3><p data-cms="vision_text">To be a trusted natural food brand known for thoughtful sourcing, dependable quality, and warm service.</p></article>
+      <article class="site-value-card fade-up"><span><i class="fa-solid fa-handshake"></i></span><h3>Our Values</h3><p data-cms="values_text">Integrity in every product. Warmth in every interaction. Consistency in the care we give our customers.</p></article>
+    </div>
+  </div></section>
+  <section class="section" style="background:white"><div class="container">
+    <div class="section-header fade-up"><div class="eyebrow" data-cms="process_eyebrow">How We Do It</div><h2 class="section-title"><span data-cms="process_title_first">Thoughtful at</span> <span class="italic" data-cms="process_title_accent">Every Step</span></h2><p class="section-desc" data-cms="process_description">A personal approach helps us bring care and attention to the foods we share.</p></div>
+    <div class="site-value-grid">
+      <article class="site-process-card fade-up"><strong>01</strong><h3>Careful Sourcing</h3><p>Products are selected from suppliers and farms with attention to quality and authenticity.</p></article>
+      <article class="site-process-card fade-up"><strong>02</strong><h3>Quality Checks</h3><p>We pay attention to freshness and quality before products are prepared for customers.</p></article>
+      <article class="site-process-card fade-up"><strong>03</strong><h3>Careful Handling</h3><p>Products are handled and packed with care so they are ready for your home or business.</p></article>
+    </div>
+  </div></section>
+</div>
+<div class="page-section" id="products" data-cms-page="gallery">
+  <section class="page-hero"><div class="eyebrow" data-cms="hero_eyebrow">C.Zara Product Catalogue</div><h2 class="page-hero-title"><span data-cms="hero_title_first">Our</span> <span class="gold" data-cms="hero_title_accent">Products</span></h2><p data-cms="hero_description">Explore our selection of natural foods and pantry essentials. Call or message us for today's prices, sizes, and availability.</p></section>
+  <section class="section" style="background:var(--cream)"><div class="container">
+    <div class="catalogue-intro"><div><span class="eyebrow">Good food, thoughtfully chosen</span><p>Prices and pack sizes can change, so we confirm every order personally. No online checkout—just friendly service by phone or WhatsApp.</p></div><div class="catalogue-contact-actions"><a class="catalogue-contact-whatsapp" href="https://wa.me/2348060561101" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Chat to order</a><a class="catalogue-contact-call" href="tel:+2348060561101"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call Florence</a></div></div>
+    <div class="filter-tabs site-gallery-filters" role="group" aria-label="Filter products by category">
+      <button class="filter-tab active" type="button" data-gallery-filter="all" aria-pressed="true">All</button>
+      <button class="filter-tab" type="button" data-gallery-filter="honey" aria-pressed="false">Honey</button>
+      <button class="filter-tab" type="button" data-gallery-filter="nuts" aria-pressed="false">Nuts</button>
+      <button class="filter-tab" type="button" data-gallery-filter="oil" aria-pressed="false">Oils</button>
+      <button class="filter-tab" type="button" data-gallery-filter="gifts" aria-pressed="false">Gifts</button>
+      <button class="filter-tab" type="button" data-gallery-filter="staples" aria-pressed="false">Foodstuffs</button>
+    </div>
+    <div id="galleryGrid" class="site-gallery-grid" aria-live="polite">
+      <article class="gallery-item" data-gallery-item="honey">
+        <div class="site-gallery-art"><img src="assets/images/products/natural-honey.jpg" alt="Bottle of natural honey" loading="lazy"></div>
+        <div class="gi-body"><div class="gi-tag">Honey</div><h3 class="gi-title">Natural Honey</h3><p class="gi-sub">A naturally sweet pantry favourite for everyday use, sharing, and thoughtful food hampers.</p><div class="gi-price"><strong>₦5,160 / 400g</strong><span>Confirm current price and availability</span></div><div class="gi-actions"><a class="gi-inquiry" href="https://wa.me/2348060561101?text=Hello%20C.Zara%2C%20I%27d%20like%20to%20order%20Natural%20Honey.%20Please%20share%20today%27s%20price%2C%20sizes%2C%20and%20availability." target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</a><a class="gi-call" href="tel:+2348060561101" aria-label="Call to order Natural Honey"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call</a></div></div>
+      </article>
+      <article class="gallery-item" data-gallery-item="nuts">
+        <div class="site-gallery-art"><img src="assets/images/products/cashew-nuts.jpg" alt="Cashew nuts in a clear bottle" loading="lazy"></div>
+        <div class="gi-body"><div class="gi-tag">Nuts</div><h3 class="gi-title">Premium Cashew Nuts</h3><p class="gi-sub">A satisfying snack and a versatile addition to treats, recipes, and gift selections.</p><div class="gi-price"><strong>₦6,500 / 400g</strong><span>Confirm current price and availability</span></div><div class="gi-actions"><a class="gi-inquiry" href="https://wa.me/2348060561101?text=Hello%20C.Zara%2C%20I%27d%20like%20to%20order%20Premium%20Cashew%20Nuts.%20Please%20share%20today%27s%20price%2C%20sizes%2C%20and%20availability." target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</a><a class="gi-call" href="tel:+2348060561101" aria-label="Call to order Premium Cashew Nuts"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call</a></div></div>
+      </article>
+      <article class="gallery-item" data-gallery-item="nuts">
+        <div class="site-gallery-art"><img src="assets/images/products/groundnuts.jpg" alt="Bottles of natural groundnuts" loading="lazy"></div>
+        <div class="gi-body"><div class="gi-tag">Nuts</div><h3 class="gi-title">Natural Groundnuts</h3><p class="gi-sub">A familiar pantry staple to enjoy on its own or add to everyday meals and snacks.</p><div class="gi-price"><strong>₦4,000 / 75cl bottle</strong><span>Confirm current price and availability</span></div><div class="gi-actions"><a class="gi-inquiry" href="https://wa.me/2348060561101?text=Hello%20C.Zara%2C%20I%27d%20like%20to%20order%20Natural%20Groundnuts.%20Please%20share%20today%27s%20price%2C%20sizes%2C%20and%20availability." target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</a><a class="gi-call" href="tel:+2348060561101" aria-label="Call to order Natural Groundnuts"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call</a></div></div>
+      </article>
+      <article class="gallery-item" data-gallery-item="oil">
+        <div class="site-gallery-art"><img src="assets/images/products/red-palm-oil.jpg" alt="Bottles of red palm oil" loading="lazy"></div>
+        <div class="gi-body"><div class="gi-tag">Oils</div><h3 class="gi-title">Red Palm Oil</h3><p class="gi-sub">A richly coloured cooking staple for soups, stews, and traditional dishes.</p><div class="gi-price"><strong>₦4,500 / 1.5 litre bottle</strong><span>Confirm current price and availability</span></div><div class="gi-actions"><a class="gi-inquiry" href="https://wa.me/2348060561101?text=Hello%20C.Zara%2C%20I%27d%20like%20to%20order%20Red%20Palm%20Oil.%20Please%20share%20today%27s%20price%2C%20sizes%2C%20and%20availability." target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</a><a class="gi-call" href="tel:+2348060561101" aria-label="Call to order Red Palm Oil"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call</a></div></div>
+      </article>
+    </div>
+    <nav id="galleryPagination" class="site-gallery-pagination" aria-label="Gallery pages" hidden></nav>
+    <p class="site-gallery-note" data-cms="gallery_note">Prices and pack sizes may change. Call or WhatsApp us to confirm today's price, availability, and delivery before placing your order.</p>
+  </div></section>
+  <section class="section-sm site-home-cta"><div class="container fade-up"><div class="eyebrow" data-cms="cta_eyebrow">A Personal Touch</div><h2><span data-cms="cta_title_first">Ready to place</span> <span class="italic" data-cms="cta_title_accent">an order?</span></h2><p data-cms="cta_description">Speak with Florence to confirm your selection, today's price, and delivery options.</p><div class="catalogue-contact-actions catalogue-contact-actions-bottom"><a class="catalogue-contact-whatsapp" href="https://wa.me/2348060561101" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Chat on WhatsApp</a><a class="catalogue-contact-call" href="tel:+2348060561101"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call 08060561101</a></div></div></section>
+</div>
+<div class="page-section" id="contact" data-cms-page="contact">
+  <section class="page-hero"><div class="eyebrow" data-cms="hero_eyebrow">Get in Touch</div><h2 class="page-hero-title"><span data-cms="hero_title_first">Contact</span> <span class="gold" data-cms="hero_title_accent">C.Zara Enterprise</span></h2><p data-cms="hero_description">Reach out to Florence for general questions and information about C.Zara.</p></section>
+  <section class="section" style="background:var(--cream)"><div class="container site-contact-layout">
+    <div class="site-contact-intro fade-left"><div class="eyebrow" data-cms="contact_eyebrow">Let's Talk</div><h2 class="section-title site-left-title"><span data-cms="contact_title_first">We're Here</span> <span class="italic" data-cms="contact_title_accent">to Help</span></h2><p data-cms="contact_description">Choose the way that works best for you. Phone and email links open on your device; WhatsApp opens a chat with C.Zara Enterprise.</p><div class="site-contact-card"><i class="fa-solid fa-location-dot"></i><div><h3>Location</h3><p data-cms="location">Kurudu, FCT, Abuja, Nigeria</p></div></div><div class="site-contact-card"><i class="fa-solid fa-clock"></i><div><h3>Business Hours</h3><p data-cms="business_hours">Monday – Saturday, 8:00am – 7:00pm</p></div></div></div>
+    <div class="site-contact-actions fade-right">
+      <a class="site-contact-link" href="tel:+2348060561101"><span class="site-contact-icon"><i class="fa-solid fa-phone"></i></span><span><strong>Call Us</strong><small>08060561101</small></span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+      <a class="site-contact-link" href="https://wa.me/2348060561101" target="_blank" rel="noopener noreferrer"><span class="site-contact-icon whatsapp"><i class="fa-brands fa-whatsapp"></i></span><span><strong>WhatsApp</strong><small>Start a conversation</small></span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+      <a class="site-contact-link" href="mailto:florencechi30@gmail.com"><span class="site-contact-icon"><i class="fa-solid fa-envelope"></i></span><span><strong>Email</strong><small>florencechi30@gmail.com</small></span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+      <p class="site-static-note"><i class="fa-solid fa-circle-info"></i> This site is static and does not collect or store enquiry form submissions.</p>
+    </div>
+  </div></section>
+  <section class="section-sm site-delivery"><div class="container"><div class="section-header fade-up"><div class="eyebrow" data-cms="service_eyebrow">Around Abuja</div><h2 class="section-title"><span data-cms="service_title_first">Serving</span> <span class="italic" data-cms="service_title_accent">Our Community</span></h2><p class="section-desc" data-cms="service_description">C.Zara Enterprise is based in Kurudu, FCT, Abuja. Contact us directly for current availability and service details.</p></div><div class="site-area-list"><span>Kurudu</span><span>Karu</span><span>Nyanya</span><span>Garki</span><span>Wuse</span><span>Maitama</span><span>Gwarinpa</span><span>Lugbe</span></div></div></section>
+</div>
 </main>
 
 <footer class="site-footer">
   <div class="container site-footer-inner">
-    <div><a class="site-footer-brand" href="index.html">C.Zara Enterprise</a><p>Quality You Can Trust, Goodness You Can Taste.</p><p>Kurudu, FCT, Abuja, Nigeria</p></div>
-    <nav aria-label="Footer navigation"><a href="about.html">About Us</a><a href="gallery.html">Products</a><a href="contact.html">Contact</a></nav>
+    <div><a class="site-footer-brand" href="#home">C.Zara Enterprise</a><p>Quality You Can Trust, Goodness You Can Taste.</p><p>Kurudu, FCT, Abuja, Nigeria</p></div>
+    <nav aria-label="Footer navigation"><a href="#about">About</a><a href="#products">Products</a><a href="#contact">Contact</a></nav>
     <div class="site-footer-contact"><a href="tel:+2348060561101">08060561101</a><a href="mailto:florencechi30@gmail.com">florencechi30@gmail.com</a><a href="https://wa.me/2348060561101" target="_blank" rel="noopener noreferrer">WhatsApp</a></div>
   </div>
   <div class="site-footer-bottom">© <span data-current-year>2026</span> C.Zara Enterprise. All rights reserved.</div>
 </footer>
-<a class="float-whatsapp" href="https://wa.me/2348060561101" target="_blank" rel="noopener noreferrer" aria-label="Chat with C.Zara Enterprise on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
 <button class="float-scroll-top" type="button" aria-label="Scroll to top"><i class="fa-solid fa-arrow-up"></i></button>
 <script src="assets/js/main.js"></script>
 </body>

@@ -7,48 +7,50 @@ document.addEventListener('DOMContentLoaded', () => {
   const menu = document.getElementById('mobileMenu');
   const overlay = document.getElementById('mobileOverlay');
   const closeButton = document.getElementById('mobileCloseBtn');
-  const cmsPage = document.body.dataset.cmsPage;
+  const sectionIds = ['home', 'about', 'products', 'contact'];
+  const sectionEls = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+  const basePath = location.pathname.replace(/[^/]*$/, '');
   const galleryPageSize = 6;
   let galleryProducts = [];
   let galleryLoaded = false;
   let galleryFilter = 'all';
   let galleryPage = 1;
 
-  const loadCMSContent = async () => {
+  const validateGallery = products => {
+    if (!Array.isArray(products) || products.some(product =>
+      !product || !['honey', 'nuts', 'oil', 'gifts', 'staples'].includes(product.category) ||
+      typeof product.title !== 'string' || typeof product.description !== 'string' ||
+      typeof product.image !== 'string' ||
+      (product.price !== undefined && typeof product.price !== 'string')
+    )) {
+      throw new Error('Gallery products contain invalid or missing fields.');
+    }
+  };
+
+  const loadSection = async wrapper => {
+    const page = wrapper.dataset.cmsPage;
     try {
-      const response = await fetch(`content/${cmsPage}.json`);
+      const response = await fetch(`content/${page}.json`);
       if (!response.ok) throw new Error(`Content request failed with status ${response.status}`);
       const content = await response.json();
-      const contentNodes = document.querySelectorAll('[data-cms]');
+      const contentNodes = wrapper.querySelectorAll('[data-cms]');
       const missingFields = Array.from(contentNodes)
         .map(node => node.dataset.cms)
         .filter(field => typeof content[field] !== 'string');
-
-      if (missingFields.length) {
-        throw new Error(`Missing text fields: ${missingFields.join(', ')}`);
-      }
-
-      if (cmsPage === 'gallery') {
-        if (!Array.isArray(content.products) || content.products.some(product =>
-          !product || !['honey', 'nuts', 'oil', 'gifts', 'staples'].includes(product.category) ||
-          typeof product.title !== 'string' || typeof product.description !== 'string' ||
-          typeof product.image !== 'string' ||
-          (product.price !== undefined && typeof product.price !== 'string')
-        )) {
-          throw new Error('Gallery products contain invalid or missing fields.');
-        }
-      }
+      if (missingFields.length) throw new Error(`Missing text fields: ${missingFields.join(', ')}`);
+      if (page === 'gallery') validateGallery(content.products);
 
       contentNodes.forEach(node => {
         node.textContent = content[node.dataset.cms];
       });
-
-      if (cmsPage === 'gallery') {
-        renderGallery(content.products);
-      }
+      if (page === 'gallery') renderGallery(content.products);
     } catch (error) {
-      console.error(`Unable to load CMS content for "${cmsPage}".`, error);
+      console.error(`Unable to load CMS content for "${page}".`, error);
     }
+  };
+
+  const loadCMSContent = () => {
+    document.querySelectorAll('[data-cms-page]').forEach(loadSection);
   };
 
   const renderGallery = products => {
@@ -95,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const tag = document.createElement('div');
       tag.className = 'gi-tag';
       tag.textContent = categoryLabels[product.category];
-      const title = document.createElement('h2');
+      const title = document.createElement('h3');
       title.className = 'gi-title';
       title.textContent = product.title;
       const description = document.createElement('p');
@@ -192,13 +194,49 @@ document.addEventListener('DOMContentLoaded', () => {
     pagination.append(previousButton, pageLabel, nextButton);
   };
 
-  if (cmsPage) loadCMSContent();
+  loadCMSContent();
+
+  let currentSection = null;
+  const setActiveSection = id => {
+    document.querySelectorAll('[data-nav]').forEach(link => {
+      const active = link.dataset.nav === id;
+      link.classList.toggle('active', active);
+      if (active) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    });
+  };
+  const findCurrentSection = () => {
+    const line = window.innerHeight * 0.35;
+    let found = sectionEls[0];
+    sectionEls.forEach(el => {
+      if (el.getBoundingClientRect().top <= line) found = el;
+    });
+    // At the very bottom of the page the last section is always the active one.
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      found = sectionEls[sectionEls.length - 1];
+    }
+    return found ? found.id : null;
+  };
+  const updateSection = () => {
+    const id = findCurrentSection();
+    if (!id || id === currentSection) return;
+    const isFirst = currentSection === null;
+    currentSection = id;
+    setActiveSection(id);
+    // Keep the address bar in sync with short links such as /about, /products and /contact.
+    if (!isFirst || (id !== 'home' && !location.hash)) {
+      try { history.replaceState(null, '', id === 'home' ? basePath : `${basePath}${id}`); } catch (error) { /* ignore */ }
+    }
+  };
 
   const updateScrollState = () => {
     nav?.classList.toggle('scrolled', window.scrollY > 60);
     scrollButton?.classList.toggle('visible', window.scrollY > 500);
+    updateSection();
   };
   window.addEventListener('scroll', updateScrollState, { passive: true });
+  window.addEventListener('resize', updateSection);
+  window.addEventListener('load', updateSection);
   updateScrollState();
 
   scrollButton?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));

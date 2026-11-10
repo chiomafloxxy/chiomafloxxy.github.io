@@ -2,11 +2,11 @@
 
 backend:
   name: github
-  repo: chiomafloxxy/czara
+  repo: chiomafloxxy/chiomafloxxy.github.io
   branch: main
 
 media_folder: /assets/images/products
-public_folder: /czara/assets/images/products
+public_folder: /assets/images/products
 
 collections:
   - name: site_pages
@@ -31,10 +31,6 @@ collections:
           - { label: Feature 2 Description, name: feature_2_description, widget: text }
           - { label: Feature 3 Title, name: feature_3_title, widget: string }
           - { label: Feature 3 Description, name: feature_3_description, widget: text }
-          - { label: CTA Eyebrow, name: cta_eyebrow, widget: string }
-          - { label: CTA Title - First Part, name: cta_title_first, widget: string }
-          - { label: CTA Title - Emphasis, name: cta_title_accent, widget: string }
-          - { label: CTA Description, name: cta_description, widget: text }
       - name: about
         label: About Page
         file: content/about.json
@@ -60,10 +56,6 @@ collections:
           - { label: Process Section Title - First Part, name: process_title_first, widget: string }
           - { label: Process Section Title - Emphasis, name: process_title_accent, widget: string }
           - { label: Process Description, name: process_description, widget: text }
-          - { label: CTA Eyebrow, name: cta_eyebrow, widget: string }
-          - { label: CTA Title - First Part, name: cta_title_first, widget: string }
-          - { label: CTA Title - Emphasis, name: cta_title_accent, widget: string }
-          - { label: CTA Description, name: cta_description, widget: text }
       - name: contact
         label: Contact Page
         file: content/contact.json
