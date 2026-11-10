@@ -6,6 +6,8 @@ The official, static business website for C.Zara Enterprise. It is built with HT
 
 With XAMPP, start Apache and open `http://localhost/czara/`. The pages use relative links and load their editable text and product list from the JSON files in `content/`.
 
+The site uses only the minified Font Awesome stylesheet and its required webfonts. The unused icon package files have been removed to keep uploads small; the remaining icon assets are in `assets/fontawesome/`.
+
 ## Publish on GitHub Pages
 
 1. Upload this repository's files to the root of `chiomafloxxy/czara`.
