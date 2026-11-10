@@ -1,6 +1,13 @@
 {
-  "title": "Products",
-  "intro": "Order by WhatsApp or phone. There is no online checkout, so we confirm the price, availability and delivery with you personally. Prices can change, so please check before you order.",
+  "hero_eyebrow": "Products and prices",
+  "hero_title_first": "Our",
+  "hero_title_accent": "Products",
+  "hero_description": "Natural foods and pantry items. Call or message us for today's prices, sizes and availability.",
+  "gallery_note": "Prices and pack sizes may change. Call or WhatsApp us to confirm today's price, availability and delivery before you order.",
+  "cta_eyebrow": "Order",
+  "cta_title_first": "Ready to",
+  "cta_title_accent": "order?",
+  "cta_description": "Message or call Florence to confirm your selection, today's price and delivery.",
   "products": [
     {
       "category": "honey",

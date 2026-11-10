@@ -1,7 +1,16 @@
 {
-  "title": "Contact",
-  "intro": "Call or message Florence to place an order or ask a question.",
+  "hero_eyebrow": "Get in Touch",
+  "hero_title_first": "Contact",
+  "hero_title_accent": "C.Zara Enterprise",
+  "hero_description": "Call, message or email Florence.",
+  "contact_eyebrow": "Contact details",
+  "contact_title_first": "How to",
+  "contact_title_accent": "reach us",
+  "contact_description": "Call, message us on WhatsApp, or send an email.",
   "location": "Kurudu, FCT, Abuja, Nigeria",
   "business_hours": "Monday – Saturday, 8:00am – 7:00pm",
-  "service_area": "We serve Kurudu, Karu, Nyanya, Garki, Wuse, Maitama, Gwarinpa and Lugbe. Contact us for current availability and delivery details."
+  "service_eyebrow": "Around Abuja",
+  "service_title_first": "Areas",
+  "service_title_accent": "we serve",
+  "service_description": "Based in Kurudu, FCT, Abuja. Contact us for current availability and delivery details."
 }
