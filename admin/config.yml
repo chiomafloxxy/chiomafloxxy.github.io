@@ -13,80 +13,17 @@ collections:
     label: Site Pages
     files:
       - name: home
-        label: Homepage
+        label: Home
         file: content/home.json
         fields:
-          - { label: Hero Badge, name: hero_badge, widget: string }
-          - { label: Hero Title - First Line, name: hero_title_first, widget: string }
-          - { label: Hero Title - Second Line, name: hero_title_second, widget: string }
-          - { label: Hero Tagline, name: hero_tagline, widget: string }
-          - { label: Hero Description, name: hero_description, widget: text }
-          - { label: Values Eyebrow, name: values_eyebrow, widget: string }
-          - { label: Values Title - First Part, name: values_title_first, widget: string }
-          - { label: Values Title - Emphasis, name: values_title_accent, widget: string }
-          - { label: Values Description, name: values_description, widget: text }
-          - { label: Feature 1 Title, name: feature_1_title, widget: string }
-          - { label: Feature 1 Description, name: feature_1_description, widget: text }
-          - { label: Feature 2 Title, name: feature_2_title, widget: string }
-          - { label: Feature 2 Description, name: feature_2_description, widget: text }
-          - { label: Feature 3 Title, name: feature_3_title, widget: string }
-          - { label: Feature 3 Description, name: feature_3_description, widget: text }
-      - name: about
-        label: About Page
-        file: content/about.json
-        fields:
-          - { label: Hero Eyebrow, name: hero_eyebrow, widget: string }
-          - { label: Hero Title - First Part, name: hero_title_first, widget: string }
-          - { label: Hero Title - Emphasis, name: hero_title_accent, widget: string }
-          - { label: Hero Description, name: hero_description, widget: text }
-          - { label: Founder Section Eyebrow, name: founder_eyebrow, widget: string }
-          - { label: Founder Name, name: founder_name, widget: string }
-          - { label: Founder Nickname, name: founder_nickname, widget: string }
-          - { label: Founder Paragraph 1, name: founder_paragraph_1, widget: text }
-          - { label: Founder Paragraph 2, name: founder_paragraph_2, widget: text }
-          - { label: Founder Paragraph 3, name: founder_paragraph_3, widget: text }
-          - { label: Mission Section Eyebrow, name: mission_eyebrow, widget: string }
-          - { label: Mission Section Title - First Part, name: mission_title_first, widget: string }
-          - { label: Mission Section Title - Emphasis, name: mission_title_accent, widget: string }
-          - { label: Mission Description, name: mission_description, widget: text }
-          - { label: Our Mission, name: mission_text, widget: text }
-          - { label: Our Vision, name: vision_text, widget: text }
-          - { label: Our Values, name: values_text, widget: text }
-          - { label: Process Section Eyebrow, name: process_eyebrow, widget: string }
-          - { label: Process Section Title - First Part, name: process_title_first, widget: string }
-          - { label: Process Section Title - Emphasis, name: process_title_accent, widget: string }
-          - { label: Process Description, name: process_description, widget: text }
-      - name: contact
-        label: Contact Page
-        file: content/contact.json
-        fields:
-          - { label: Hero Eyebrow, name: hero_eyebrow, widget: string }
-          - { label: Hero Title - First Part, name: hero_title_first, widget: string }
-          - { label: Hero Title - Emphasis, name: hero_title_accent, widget: string }
-          - { label: Hero Description, name: hero_description, widget: text }
-          - { label: Contact Section Eyebrow, name: contact_eyebrow, widget: string }
-          - { label: Contact Section Title - First Part, name: contact_title_first, widget: string }
-          - { label: Contact Section Title - Emphasis, name: contact_title_accent, widget: string }
-          - { label: Contact Section Description, name: contact_description, widget: text }
-          - { label: Location, name: location, widget: string }
-          - { label: Business Hours, name: business_hours, widget: string }
-          - { label: Service Area Eyebrow, name: service_eyebrow, widget: string }
-          - { label: Service Area Title - First Part, name: service_title_first, widget: string }
-          - { label: Service Area Title - Emphasis, name: service_title_accent, widget: string }
-          - { label: Service Area Description, name: service_description, widget: text }
-      - name: gallery
-        label: Gallery Page
+          - { label: Headline, name: hero_title, widget: string }
+          - { label: Intro, name: hero_description, widget: text }
+      - name: products
+        label: Products
         file: content/gallery.json
         fields:
-          - { label: Hero Eyebrow, name: hero_eyebrow, widget: string }
-          - { label: Hero Title - First Part, name: hero_title_first, widget: string }
-          - { label: Hero Title - Emphasis, name: hero_title_accent, widget: string }
-          - { label: Hero Description, name: hero_description, widget: text }
-          - { label: Gallery Note, name: gallery_note, widget: string }
-          - { label: CTA Eyebrow, name: cta_eyebrow, widget: string }
-          - { label: CTA Title - First Part, name: cta_title_first, widget: string }
-          - { label: CTA Title - Emphasis, name: cta_title_accent, widget: string }
-          - { label: CTA Description, name: cta_description, widget: text }
+          - { label: Section Title, name: title, widget: string }
+          - { label: Intro, name: intro, widget: text }
           - label: Products
             name: products
             widget: list
@@ -110,3 +47,20 @@ collections:
                 required: false
                 hint: Enter the Naira price and pack size together, for example ₦27,600 / 500g. Leave blank to show Price on request.
               - { label: Product Photo, name: image, widget: image, required: true }
+      - name: about
+        label: About
+        file: content/about.json
+        fields:
+          - { label: Section Title, name: title, widget: string }
+          - { label: Paragraph 1, name: paragraph_1, widget: text }
+          - { label: Paragraph 2, name: paragraph_2, widget: text }
+          - { label: Paragraph 3, name: paragraph_3, widget: text }
+      - name: contact
+        label: Contact
+        file: content/contact.json
+        fields:
+          - { label: Section Title, name: title, widget: string }
+          - { label: Intro, name: intro, widget: text }
+          - { label: Location, name: location, widget: string }
+          - { label: Business Hours, name: business_hours, widget: string }
+          - { label: Areas We Serve, name: service_area, widget: text }

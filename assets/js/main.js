@@ -1,20 +1,20 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const nav = document.getElementById('mainNav');
-  const scrollButton = document.querySelector('.float-scroll-top');
-  const menuButton = document.getElementById('menuToggleBtn');
-  const menu = document.getElementById('mobileMenu');
-  const overlay = document.getElementById('mobileOverlay');
-  const closeButton = document.getElementById('mobileCloseBtn');
-  const sectionIds = ['home', 'about', 'products', 'contact'];
+  const sectionIds = ['home', 'products', 'about', 'contact'];
   const sectionEls = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
   const basePath = location.pathname.replace(/[^/]*$/, '');
   const galleryPageSize = 6;
   let galleryProducts = [];
-  let galleryLoaded = false;
   let galleryFilter = 'all';
   let galleryPage = 1;
+
+  const make = (tag, className, text) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  };
 
   const validateGallery = products => {
     if (!Array.isArray(products) || products.some(product =>
@@ -23,10 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
       typeof product.image !== 'string' ||
       (product.price !== undefined && typeof product.price !== 'string')
     )) {
-      throw new Error('Gallery products contain invalid or missing fields.');
+      throw new Error('Product list contains invalid or missing fields.');
     }
   };
 
+  // Fills every [data-cms] element from content/<page>.json. The text already in the HTML
+  // is the same text, so the page still reads correctly if a file cannot be loaded.
   const loadSection = async wrapper => {
     const page = wrapper.dataset.cmsPage;
     try {
@@ -45,99 +47,64 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       if (page === 'gallery') renderGallery(content.products);
     } catch (error) {
-      console.error(`Unable to load CMS content for "${page}".`, error);
+      console.error(`Unable to load content for "${page}".`, error);
     }
-  };
-
-  const loadCMSContent = () => {
-    document.querySelectorAll('[data-cms-page]').forEach(loadSection);
   };
 
   const renderGallery = products => {
     const galleryGrid = document.getElementById('galleryGrid');
     if (!galleryGrid) return;
     galleryProducts = products;
-    galleryLoaded = true;
+
+    // Category filters are only useful once the list is longer than one page.
+    const filters = document.getElementById('galleryFilters');
+    if (filters) filters.hidden = products.length <= galleryPageSize;
     document.querySelectorAll('[data-gallery-filter]').forEach(button => {
       button.hidden = button.dataset.galleryFilter !== 'all' &&
         !products.some(product => product.category === button.dataset.galleryFilter);
     });
 
-    const categoryLabels = {
-      honey: 'Honey',
-      nuts: 'Nuts',
-      oil: 'Oils',
-      gifts: 'Gifts',
-      staples: 'Foodstuffs'
-    };
     const fragment = document.createDocumentFragment();
-
     products.forEach((product, index) => {
-      const item = document.createElement('article');
-      item.className = 'gallery-item';
+      const item = make('article', 'product');
       item.dataset.galleryItem = product.category;
       item.dataset.galleryIndex = String(index);
 
-      const art = document.createElement('div');
-      art.className = 'site-gallery-art';
       if (product.image) {
-        const image = document.createElement('img');
+        const image = make('img');
         image.src = product.image;
-        image.alt = `${product.title} product photo`;
+        image.alt = `${product.title}, product photo`;
         image.loading = 'lazy';
         image.decoding = 'async';
-        art.append(image);
+        item.append(image);
       } else {
-        art.classList.add('site-gallery-art-empty');
-        art.textContent = 'Product photo coming soon';
+        item.append(make('div', 'product-photo-empty', 'Photo coming soon'));
       }
 
-      const body = document.createElement('div');
-      body.className = 'gi-body';
-      const tag = document.createElement('div');
-      tag.className = 'gi-tag';
-      tag.textContent = categoryLabels[product.category];
-      const title = document.createElement('h3');
-      title.className = 'gi-title';
-      title.textContent = product.title;
-      const description = document.createElement('p');
-      description.className = 'gi-sub';
-      description.textContent = product.description;
-      const price = document.createElement('div');
-      price.className = 'gi-price';
-      const priceValue = document.createElement('strong');
-      priceValue.textContent = product.price || 'Price on request';
-      const priceNote = document.createElement('span');
-      priceNote.textContent = product.price ? 'Confirm current price and availability' : 'Ask about sizes & availability';
-      price.append(priceValue, priceNote);
+      const body = make('div', 'product-body');
+      body.append(
+        make('h3', '', product.title),
+        make('p', 'price', product.price || 'Price on request'),
+        make('p', 'desc', product.description)
+      );
 
-      body.append(tag, title, price, description);
-
-      const actions = document.createElement('div');
-      actions.className = 'gi-actions';
-      const enquiry = document.createElement('a');
-      enquiry.className = 'gi-inquiry';
-      enquiry.href = `https://wa.me/2348060561101?text=${encodeURIComponent(`Hello C.Zara, I'd like to order ${product.title}. Please share today's price, sizes, and availability.`)}`;
-      enquiry.target = '_blank';
-      enquiry.rel = 'noopener noreferrer';
-      enquiry.setAttribute('aria-label', `WhatsApp to order ${product.title}`);
-      const whatsappIcon = document.createElement('i');
-      whatsappIcon.className = 'fa-brands fa-whatsapp';
+      const actions = make('div', 'product-actions');
+      const whatsapp = make('a', 'btn btn-small');
+      whatsapp.href = `https://wa.me/2348060561101?text=${encodeURIComponent(`Hello C.Zara, I'd like to order ${product.title}. Please share today's price, sizes, and availability.`)}`;
+      whatsapp.target = '_blank';
+      whatsapp.rel = 'noopener noreferrer';
+      whatsapp.setAttribute('aria-label', `WhatsApp to order ${product.title}`);
+      const whatsappIcon = make('i', 'fa-brands fa-whatsapp');
       whatsappIcon.setAttribute('aria-hidden', 'true');
-      enquiry.append(whatsappIcon, document.createTextNode(' WhatsApp'));
+      whatsapp.append(whatsappIcon, document.createTextNode(' WhatsApp'));
 
-      const call = document.createElement('a');
-      call.className = 'gi-call';
+      const call = make('a', 'btn btn-small btn-line', 'Call');
       call.href = 'tel:+2348060561101';
       call.setAttribute('aria-label', `Call to order ${product.title}`);
-      const phoneIcon = document.createElement('i');
-      phoneIcon.className = 'fa-solid fa-phone';
-      phoneIcon.setAttribute('aria-hidden', 'true');
-      call.append(phoneIcon, document.createTextNode(' Call'));
-      actions.append(enquiry, call);
-      body.append(actions);
 
-      item.append(art, body);
+      actions.append(whatsapp, call);
+      body.append(actions);
+      item.append(body);
       fragment.append(item);
     });
 
@@ -168,23 +135,19 @@ document.addEventListener('DOMContentLoaded', () => {
     pagination.hidden = pageCount <= 1;
     if (pageCount <= 1) return;
 
-    const previousButton = document.createElement('button');
+    const previousButton = make('button', '', 'Previous');
     previousButton.type = 'button';
-    previousButton.textContent = 'Previous';
     previousButton.disabled = galleryPage === 1;
     previousButton.addEventListener('click', () => {
       galleryPage -= 1;
       updateGalleryView();
     });
 
-    const pageLabel = document.createElement('span');
-    pageLabel.className = 'site-gallery-page-label';
-    pageLabel.textContent = `Page ${galleryPage} of ${pageCount}`;
+    const pageLabel = make('span', '', `Page ${galleryPage} of ${pageCount}`);
     pageLabel.setAttribute('aria-live', 'polite');
 
-    const nextButton = document.createElement('button');
+    const nextButton = make('button', '', 'Next');
     nextButton.type = 'button';
-    nextButton.textContent = 'Next';
     nextButton.disabled = galleryPage === pageCount;
     nextButton.addEventListener('click', () => {
       galleryPage += 1;
@@ -194,8 +157,22 @@ document.addEventListener('DOMContentLoaded', () => {
     pagination.append(previousButton, pageLabel, nextButton);
   };
 
-  loadCMSContent();
+  document.querySelectorAll('[data-gallery-filter]').forEach(button => {
+    button.addEventListener('click', () => {
+      galleryFilter = button.dataset.galleryFilter;
+      galleryPage = 1;
+      document.querySelectorAll('[data-gallery-filter]').forEach(filterButton => {
+        const selected = filterButton === button;
+        filterButton.setAttribute('aria-pressed', String(selected));
+      });
+      updateGalleryView();
+    });
+  });
 
+  document.querySelectorAll('[data-cms-page]').forEach(loadSection);
+
+  // Highlight the current section in the menu and keep the address bar on short links
+  // such as /products, /about and /contact.
   let currentSection = null;
   const setActiveSection = id => {
     document.querySelectorAll('[data-nav]').forEach(link => {
@@ -223,92 +200,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const isFirst = currentSection === null;
     currentSection = id;
     setActiveSection(id);
-    // Keep the address bar in sync with short links such as /about, /products and /contact.
     if (!isFirst || (id !== 'home' && !location.hash)) {
       try { history.replaceState(null, '', id === 'home' ? basePath : `${basePath}${id}`); } catch (error) { /* ignore */ }
     }
   };
-
-  const updateScrollState = () => {
-    nav?.classList.toggle('scrolled', window.scrollY > 60);
-    scrollButton?.classList.toggle('visible', window.scrollY > 500);
-    updateSection();
-  };
-  window.addEventListener('scroll', updateScrollState, { passive: true });
+  window.addEventListener('scroll', updateSection, { passive: true });
   window.addEventListener('resize', updateSection);
   window.addEventListener('load', updateSection);
-  updateScrollState();
-
-  scrollButton?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-  const closeMenu = () => {
-    const wasOpen = menu?.classList.contains('open');
-    menu?.classList.remove('open');
-    overlay?.classList.remove('open');
-    menuButton?.classList.remove('open');
-    menuButton?.setAttribute('aria-expanded', 'false');
-    menuButton?.setAttribute('aria-label', 'Open menu');
-    menu?.setAttribute('aria-hidden', 'true');
-    menu?.setAttribute('inert', '');
-    document.body.style.overflow = '';
-    if (wasOpen) menuButton?.focus();
-  };
-  const openMenu = () => {
-    menu?.removeAttribute('inert');
-    menu?.classList.add('open');
-    overlay?.classList.add('open');
-    menuButton?.classList.add('open');
-    menuButton?.setAttribute('aria-expanded', 'true');
-    menuButton?.setAttribute('aria-label', 'Close menu');
-    menu?.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    closeButton?.focus();
-  };
-
-  menuButton?.addEventListener('click', () => {
-    if (menu?.classList.contains('open')) closeMenu();
-    else openMenu();
-  });
-  closeButton?.addEventListener('click', closeMenu);
-  overlay?.addEventListener('click', closeMenu);
-  menu?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') closeMenu();
-  });
-
-  const revealElements = document.querySelectorAll('.fade-up, .fade-left, .fade-right');
-  if ('IntersectionObserver' in window) {
-    const revealObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target);
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
-    revealElements.forEach(element => revealObserver.observe(element));
-  } else {
-    revealElements.forEach(element => element.classList.add('visible'));
-  }
-
-  document.querySelectorAll('[data-gallery-filter]').forEach(button => {
-    button.addEventListener('click', () => {
-      const filter = button.dataset.galleryFilter;
-      document.querySelectorAll('[data-gallery-filter]').forEach(filterButton => {
-        const selected = filterButton === button;
-        filterButton.classList.toggle('active', selected);
-        filterButton.setAttribute('aria-pressed', String(selected));
-      });
-      if (galleryLoaded) {
-        galleryFilter = filter;
-        galleryPage = 1;
-        updateGalleryView();
-      } else {
-        document.querySelectorAll('[data-gallery-item]').forEach(item => {
-          item.hidden = filter !== 'all' && item.dataset.galleryItem !== filter;
-        });
-      }
-    });
-  });
+  updateSection();
 
   document.querySelectorAll('[data-current-year]').forEach(element => {
     element.textContent = String(new Date().getFullYear());
