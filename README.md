@@ -36,6 +36,10 @@ Product photos uploaded through the CMS are stored in `assets/images/products/`.
 
 The CMS GitHub repository, branch, and image URL base are set in `admin/config.yml`. They are configured for the `chiomafloxxy/chiomafloxxy.github.io` root site (public image URL base `/assets/images/products`).
 
+## Hero photos and founder portrait
+
+The collage at the top of the page uses the four product photos in `assets/images/products/` and is written directly in `index.html` (the `hero-tile` blocks). If a product photo or name changes, update that block too. The round portrait in the About section is `assets/images/florence-chioma.jpg`; swapping the file with a new photo of the same name is enough, and the circle crops it from the top, so keep her face in the upper half of the picture.
+
 ## Order list
 
 Each product card has a quantity control. Customers pick what they want, add an optional name and delivery area, and tap **Send order on WhatsApp**. WhatsApp opens with the list already written (items, quantities, estimated total) addressed to the business number. The total is worked out from the Naira amount at the start of each product's price, such as `₦5,160 / 400g`. Products with no price show "Price on request" and are left out of the total. Customers are told that the final price is confirmed on WhatsApp. The list exists only on the page while it is open; nothing is saved anywhere. It works from the product text on the page, so new products added through the CMS get it automatically.
