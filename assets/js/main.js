@@ -62,6 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
       button.hidden = button.dataset.galleryFilter !== 'all' &&
         !products.some(product => product.category === button.dataset.galleryFilter);
     });
+    // The category tabs only help once the list is longer than one page.
+    const filterGroup = document.querySelector('.site-gallery-filters');
+    if (filterGroup) filterGroup.hidden = products.length <= galleryPageSize;
 
     const categoryLabels = {
       honey: 'Honey',

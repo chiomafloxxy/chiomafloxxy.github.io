@@ -782,9 +782,9 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
   border: 2px solid var(--honey-light); border-radius: 30px;
 }
 .site-hero-tiles {
-  display: grid; gap: .6rem; aspect-ratio: 1 / 1.02;
-  grid-template-columns: 1.3fr 1fr 1fr; grid-template-rows: minmax(0, 1.9fr) minmax(0, 1fr);
-  grid-template-areas: "honey cashew nuts" "oil oil oil";
+  display: grid; gap: .6rem; aspect-ratio: 1 / 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr));
+  grid-template-areas: "honey honey cashew" "honey honey nuts" "oil oil brand";
 }
 .hero-tile {
   position: relative; margin: 0; overflow: hidden; border-radius: 16px; background: #ece6da;
@@ -802,16 +802,20 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 .tile-cashew { grid-area: cashew; animation-delay: .3s; }
 .tile-nuts { grid-area: nuts; animation-delay: .45s; }
 .tile-oil { grid-area: oil; animation-delay: .6s; }
-.tile-oil img { object-position: center 58%; transform: scale(1.16); }
-.tile-oil:hover img { transform: scale(1.21); }
-.site-hero-caption { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: .75rem .45rem .2rem; }
-.site-hero-caption span { color: var(--honey-gold); font-size: .67rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-.site-hero-caption strong { color: var(--brown-dark); font: 600 clamp(1rem, 1.7vw, 1.2rem) 'Playfair Display', serif; }
+.tile-oil img { transform: scale(1.14); }
+.tile-oil:hover img { transform: scale(1.19); }
+.tile-brand {
+  grid-area: brand; display: flex; flex-direction: column; justify-content: flex-end; gap: .3rem; padding: .85rem;
+  background: var(--green-deep); color: #fff; opacity: 0; animation: tileIn .7s ease .75s forwards;
+}
+.tile-brand span { color: var(--honey-light); font-size: .56rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; line-height: 1.4; }
+.tile-brand strong { font: 600 1.05rem/1.15 'Playfair Display', serif; }
 @keyframes tileIn { from { opacity: 0; transform: translateY(16px) scale(.97); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
   .hero-tile { opacity: 1; animation: none; }
   .hero-tile img, .hero-tile:hover img { transition: none; }
-  .hero-tile:not(.tile-oil) img, .hero-tile:not(.tile-oil):hover img { transform: none; }
+  .hero-tile:not(.tile-oil):hover img { transform: none; }
+  .tile-oil:hover img { transform: scale(1.14); }
 }
 @media (min-width: 801px) {
   .hero-title { font-size: clamp(2.6rem, 4.6vw, 4.4rem); }
@@ -835,6 +839,9 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
   .site-hero-tiles { gap: .45rem; }
   .hero-tile { border-radius: 12px; }
   .hero-tile figcaption { left: .4rem; bottom: .4rem; padding: .28rem .55rem; font-size: .6rem; }
+  .tile-brand { padding: .55rem; gap: .2rem; }
+  .tile-brand span { font-size: .46rem; letter-spacing: .1em; }
+  .tile-brand strong { font-size: .8rem; }
 }
 
 /* ---- Founder portrait: small, round, layered ----------------------------------- */
@@ -866,4 +873,17 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
   .site-story-grid { grid-template-columns: 1fr; gap: 2.4rem; }
   .site-founder-art { width: min(100%, 220px); }
   .site-founded { left: -8%; }
+}
+
+/* ---- Product cards: photos fill the top of the card, every card the same shape --- */
+.site-gallery-filters[hidden] { display: none; }
+.site-gallery-grid .site-gallery-art {
+  display: block; position: relative; aspect-ratio: 1 / 1; min-height: 0; padding: 0;
+  overflow: hidden; background: var(--cream-dark);
+}
+.site-gallery-grid .site-gallery-art img { display: block; width: 100%; height: 100%; padding: 0; border-radius: 0; object-fit: cover; }
+@supports not (aspect-ratio: 1 / 1) { .site-gallery-grid .site-gallery-art { height: 230px; } }
+@media (max-width: 600px) {
+  .site-gallery-grid .gi-price span { display: none; }
+  .site-gallery-grid .gi-title { min-height: 0; }
 }

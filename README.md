@@ -32,13 +32,13 @@ After enabling Pages, the product catalogue can be managed through Sveltia CMS a
 3. Open **Gallery Page → Products** to add, edit, or remove products. Set the category, name, description, photo, and optionally the price/pack size (for example, `₦27,600 / 500g`).
 4. Save the changes. CMS commits them to the configured `main` branch, and GitHub Pages republishes the site.
 
-Product photos uploaded through the CMS are stored in `assets/images/products/`. If adding a photo directly in GitHub, also add a product entry in `content/gallery.json` and use an image path such as `assets/images/products/new-product.jpg`. The optional `price` value is displayed as entered, so include both the Naira amount and pack size; leave it blank to display “Price on request.” Customers confirm current prices, availability, and delivery with the business by phone or WhatsApp. The static site does not take online payments or process checkout. The catalogue has category filters and displays up to six products per page.
+Product photos uploaded through the CMS are stored in `assets/images/products/`. If adding a photo directly in GitHub, also add a product entry in `content/gallery.json` and use an image path such as `assets/images/products/new-product.jpg`. The optional `price` value is displayed as entered, so include both the Naira amount and pack size; leave it blank to display “Price on request.” Customers confirm current prices, availability, and delivery with the business by phone or WhatsApp. The static site does not take online payments or process checkout. The catalogue shows up to six products per page; once there are more than six, the category tabs and Previous/Next buttons appear automatically.
 
 The CMS GitHub repository, branch, and image URL base are set in `admin/config.yml`. They are configured for the `chiomafloxxy/chiomafloxxy.github.io` root site (public image URL base `/assets/images/products`).
 
 ## Hero photos and founder portrait
 
-The collage at the top of the page uses the four product photos in `assets/images/products/` and is written directly in `index.html` (the `hero-tile` blocks). If a product photo or name changes, update that block too. The round portrait in the About section is `assets/images/florence-chioma.jpg`; swapping the file with a new photo of the same name is enough, and the circle crops it from the top, so keep her face in the upper half of the picture.
+The collage at the top of the page uses the four product photos in `assets/images/products/` and is written directly in `index.html` (the `hero-tile` blocks, including the small green "Kurudu, Abuja" tile). If a product photo or name changes, update that block too. The round portrait in the About section is `assets/images/florence-chioma.jpg`; swapping the file with a new photo of the same name is enough, and the circle crops it from the top, so keep her face in the upper half of the picture.
 
 ## Order list
 
