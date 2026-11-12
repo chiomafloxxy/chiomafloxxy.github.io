@@ -143,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     galleryGrid.replaceChildren(fragment);
     updateGalleryView();
+    enhanceOrderCards();
   };
 
   const updateGalleryView = () => {
@@ -309,6 +310,216 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // ---- Order list -------------------------------------------------------------------
+  // Visitors pick quantities on the product cards and send the finished list to WhatsApp.
+  // The list only lives on the page: it is turned into the WhatsApp message and nothing else.
+  const orderPanel = document.getElementById('orderPanel');
+  const orderLines = document.getElementById('orderLines');
+  const orderTotal = document.getElementById('orderTotal');
+  const orderSend = document.getElementById('orderSend');
+  const orderClear = document.getElementById('orderClear');
+  const orderName = document.getElementById('orderName');
+  const orderArea = document.getElementById('orderArea');
+  const orderBar = document.getElementById('orderBar');
+  const orderBarText = document.getElementById('orderBarText');
+  const orderBarButton = document.getElementById('orderBarButton');
+  const order = new Map(); // product title -> { price, naira, qty }
+  let productsInView = false;
+  let orderPanelInView = false;
+
+  const naira = value => `₦${value.toLocaleString('en-US')}`;
+  const parseNaira = text => {
+    const match = /₦\s*([\d,]+(?:\.\d+)?)/.exec(text || '');
+    return match ? Number(match[1].replace(/,/g, '')) : null;
+  };
+  const orderItems = () => Array.from(order.entries()).filter(([, item]) => item.qty > 0);
+  const orderTotals = items => {
+    let count = 0;
+    let sum = 0;
+    let unpriced = 0;
+    items.forEach(([, item]) => {
+      count += item.qty;
+      if (item.naira === null) unpriced += 1;
+      else sum += item.naira * item.qty;
+    });
+    return { count, sum, unpriced };
+  };
+  const totalText = ({ sum, unpriced }) => {
+    if (sum === 0) return 'We will confirm the prices when we reply.';
+    return unpriced ? `Estimated total: ${naira(sum)}, plus items we price on request` : `Estimated total: ${naira(sum)}`;
+  };
+
+  const orderMessage = items => {
+    const lines = ["Hello C.Zara, I'd like to order:"];
+    items.forEach(([title, item]) => {
+      lines.push(`- ${item.qty} × ${title}${item.price ? ` (${item.price})` : ''}`);
+    });
+    lines.push('', totalText(orderTotals(items)));
+    const name = orderName ? orderName.value.trim() : '';
+    const area = orderArea ? orderArea.value.trim() : '';
+    if (name) lines.push(`My name: ${name}`);
+    if (area) lines.push(`Delivery area: ${area}`);
+    lines.push('', 'Please confirm availability, the final price and delivery. Thank you.');
+    return lines.join('\n');
+  };
+
+  const updateOrderLink = () => {
+    if (!orderSend) return;
+    orderSend.href = `https://wa.me/2348060561101?text=${encodeURIComponent(orderMessage(orderItems()))}`;
+  };
+
+  const updateOrderBar = () => {
+    if (!orderBar) return;
+    orderBar.hidden = !(orderItems().length && productsInView && !orderPanelInView);
+  };
+
+  const updateOrder = () => {
+    if (!orderPanel) return;
+    const items = orderItems();
+    const totals = orderTotals(items);
+    orderPanel.hidden = items.length === 0;
+
+    document.querySelectorAll('.gallery-item').forEach(card => {
+      const title = card.dataset.orderTitle;
+      const quantity = order.has(title) ? order.get(title).qty : 0;
+      const value = card.querySelector('.qty-value');
+      const minus = card.querySelector('[data-qty="-1"]');
+      if (value) value.textContent = String(quantity);
+      if (minus) minus.disabled = quantity === 0;
+      card.classList.toggle('in-order', quantity > 0);
+    });
+
+    const rows = items.map(([title, item]) => {
+      const row = document.createElement('li');
+      const name = document.createElement('span');
+      name.className = 'order-line-name';
+      name.textContent = `${item.qty} × ${title}`;
+      const price = document.createElement('span');
+      price.className = 'order-line-price';
+      price.textContent = item.naira === null ? 'Price on request' : naira(item.naira * item.qty);
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'order-remove';
+      remove.dataset.orderRemove = title;
+      remove.textContent = 'Remove';
+      remove.setAttribute('aria-label', `Remove ${title} from your order`);
+      row.append(name, price, remove);
+      return row;
+    });
+    if (orderLines) orderLines.replaceChildren(...rows);
+    if (orderTotal) orderTotal.textContent = totalText(totals);
+    if (orderBarText) {
+      orderBarText.textContent = `${totals.count} ${totals.count === 1 ? 'item' : 'items'}${totals.sum ? ` · ${naira(totals.sum)}` : ''}`;
+    }
+    updateOrderLink();
+    updateOrderBar();
+  };
+
+  const changeQuantity = (title, price, change) => {
+    const current = order.get(title) || { price, naira: parseNaira(price), qty: 0 };
+    current.price = price;
+    current.naira = parseNaira(price);
+    current.qty = Math.min(99, Math.max(0, current.qty + change));
+    if (current.qty === 0) order.delete(title);
+    else order.set(title, current);
+    updateOrder();
+  };
+
+  // Adds the quantity control to every product card (the built-in ones and the ones the
+  // content file renders), reading the name and price straight from the card.
+  function enhanceOrderCards() {
+    if (!orderPanel) return;
+    const titles = new Set();
+    document.querySelectorAll('.gallery-item').forEach(card => {
+      const heading = card.querySelector('.gi-title');
+      const actions = card.querySelector('.gi-actions');
+      if (!heading || !actions) return;
+      const title = heading.textContent.trim();
+      titles.add(title);
+      card.dataset.orderTitle = title;
+      card.dataset.orderPrice = (card.querySelector('.gi-price strong') || {}).textContent || '';
+      if (card.querySelector('.gi-qty')) return;
+
+      const control = document.createElement('div');
+      control.className = 'gi-qty';
+      control.setAttribute('role', 'group');
+      control.setAttribute('aria-label', `Quantity of ${title}`);
+      const label = document.createElement('span');
+      label.className = 'qty-label';
+      label.textContent = 'Add to order';
+      const stepper = document.createElement('div');
+      stepper.className = 'qty-stepper';
+      const minus = document.createElement('button');
+      minus.type = 'button';
+      minus.className = 'qty-btn';
+      minus.dataset.qty = '-1';
+      minus.disabled = true;
+      minus.textContent = '−';
+      minus.setAttribute('aria-label', `Remove one ${title}`);
+      const value = document.createElement('output');
+      value.className = 'qty-value';
+      value.textContent = '0';
+      const plus = document.createElement('button');
+      plus.type = 'button';
+      plus.className = 'qty-btn';
+      plus.dataset.qty = '1';
+      plus.textContent = '+';
+      plus.setAttribute('aria-label', `Add one ${title}`);
+      stepper.append(minus, value, plus);
+      control.append(label, stepper);
+      actions.before(control);
+    });
+    Array.from(order.keys()).forEach(title => {
+      if (!titles.has(title)) order.delete(title);
+    });
+    updateOrder();
+  }
+
+  const galleryGridForOrder = document.getElementById('galleryGrid');
+  if (galleryGridForOrder) {
+    galleryGridForOrder.addEventListener('click', event => {
+      const button = event.target.closest('.qty-btn');
+      if (!button) return;
+      const card = button.closest('.gallery-item');
+      if (!card) return;
+      changeQuantity(card.dataset.orderTitle, card.dataset.orderPrice, Number(button.dataset.qty));
+    });
+  }
+  if (orderLines) {
+    orderLines.addEventListener('click', event => {
+      const button = event.target.closest('[data-order-remove]');
+      if (!button) return;
+      order.delete(button.dataset.orderRemove);
+      updateOrder();
+    });
+  }
+  if (orderClear) {
+    orderClear.addEventListener('click', () => {
+      order.clear();
+      updateOrder();
+    });
+  }
+  [orderName, orderArea].forEach(field => field && field.addEventListener('input', updateOrderLink));
+  if (orderBarButton && orderPanel) {
+    orderBarButton.addEventListener('click', () => {
+      orderPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+  if ('IntersectionObserver' in window && orderPanel) {
+    const productsSection = document.getElementById('products');
+    new IntersectionObserver(entries => {
+      productsInView = entries[0].isIntersecting;
+      updateOrderBar();
+    }).observe(productsSection);
+    new IntersectionObserver(entries => {
+      orderPanelInView = entries[0].isIntersecting;
+      updateOrderBar();
+    }).observe(orderPanel);
+  } else {
+    productsInView = true;
+  }
+  enhanceOrderCards();
 
   document.querySelectorAll('[data-current-year]').forEach(element => {
     element.textContent = String(new Date().getFullYear());

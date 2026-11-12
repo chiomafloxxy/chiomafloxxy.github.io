@@ -36,6 +36,16 @@ Product photos uploaded through the CMS are stored in `assets/images/products/`.
 
 The CMS GitHub repository, branch, and image URL base are set in `admin/config.yml`. They are configured for the `chiomafloxxy/chiomafloxxy.github.io` root site (public image URL base `/assets/images/products`).
 
+## Order list
+
+Each product card has a quantity control. Customers pick what they want, add an optional name and delivery area, and tap **Send order on WhatsApp**. WhatsApp opens with the list already written (items, quantities, estimated total) addressed to the business number. The total is worked out from the Naira amount at the start of each product's price, such as `₦5,160 / 400g`. Products with no price show "Price on request" and are left out of the total. Customers are told that the final price is confirmed on WhatsApp. The list exists only on the page while it is open; nothing is saved anywhere. It works from the product text on the page, so new products added through the CMS get it automatically.
+
+## Contact file and search engine files
+
+- `assets/c-zara-enterprise.vcf` is the "Save our contact" card in the Contact section. If the phone number or email ever changes, update it here as well as in `index.html`.
+- `sitemap.xml` and `robots.txt` help search engines find the site.
+- The `LocalBusiness` block in the head of `index.html` tells Google the business name, location, phone, opening hours (Monday to Saturday, 8:00am to 7:00pm) and areas served. If the hours or areas change, update that block too.
+
 ## Contact and static-site limits
 
 The contact page links to the business phone, WhatsApp, and `florencechi30@gmail.com`. GitHub Pages is static: the site does not process orders, store enquiry submissions, or provide a database. Phone, email, and WhatsApp links open the visitor's corresponding app.
