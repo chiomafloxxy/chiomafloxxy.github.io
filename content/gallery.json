@@ -19,16 +19,37 @@
     {
       "category": "nuts",
       "title": "Cashew Nuts",
-      "description": "Cashew nuts packed in a bottle.",
+      "description": "Cashew nuts, in small wrapped packs or by the 400g.",
       "image": "assets/images/products/cashew-nuts.jpg",
-      "price": "₦6,500 / 400g"
+      "options": [
+        {
+          "label": "Small wrapped pack",
+          "price": "₦500 each",
+          "image": "assets/images/products/cashew-nuts.jpg"
+        },
+        {
+          "label": "By weight",
+          "price": "₦6,500 / 400g"
+        }
+      ]
     },
     {
       "category": "nuts",
       "title": "Natural Groundnuts",
-      "description": "Groundnuts packed in bottles.",
+      "description": "Groundnuts, in bottles or in small wrapped packs.",
       "image": "assets/images/products/groundnuts.jpg",
-      "price": "₦4,000 / 75cl bottle"
+      "options": [
+        {
+          "label": "Bottled",
+          "price": "₦4,000 / 75cl bottle",
+          "image": "assets/images/products/groundnuts.jpg"
+        },
+        {
+          "label": "Small wrapped pack",
+          "price": "₦100 each",
+          "image": "assets/images/products/groundnuts-wrapped.jpg"
+        }
+      ]
     },
     {
       "category": "oil",
@@ -36,6 +57,20 @@
       "description": "Red palm oil for cooking soups, stews and other dishes.",
       "image": "assets/images/products/red-palm-oil.jpg",
       "price": "₦4,500 / 1.5 litre bottle"
+    },
+    {
+      "category": "staples",
+      "title": "Garri",
+      "description": "Garri, sold by the mudu.",
+      "image": "assets/images/products/garri.jpg",
+      "price": "₦3,500 / mudu"
+    },
+    {
+      "category": "staples",
+      "title": "Ukwa (African Bread Fruit)",
+      "description": "Ukwa packed in bottles.",
+      "image": "assets/images/products/ukwa.jpg",
+      "price": "₦5,000 / bottle"
     }
   ]
 }

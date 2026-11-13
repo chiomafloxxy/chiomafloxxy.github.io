@@ -99,3 +99,14 @@ collections:
                 required: false
                 hint: Enter the Naira price and pack size together, for example ₦27,600 / 500g. Leave blank to show Price on request.
               - { label: Product Photo, name: image, widget: image, required: true }
+              - label: Options (optional)
+                name: options
+                widget: list
+                required: false
+                label_singular: Option
+                summary: "{{fields.label}} {{fields.price}}"
+                hint: Use this when one product comes in different packs with different prices, for example bottled and small wrapped packs. If you add options, leave the price above blank. Each option gets its own quantity buttons on the site.
+                fields:
+                  - { label: Option Name, name: label, widget: string }
+                  - { label: Price and Pack Size, name: price, widget: string, hint: "For example, ₦100 each" }
+                  - { label: Option Photo (optional), name: image, widget: image, required: false }

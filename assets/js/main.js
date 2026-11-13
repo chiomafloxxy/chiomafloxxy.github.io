@@ -21,7 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
       !product || !['honey', 'nuts', 'oil', 'gifts', 'staples'].includes(product.category) ||
       typeof product.title !== 'string' || typeof product.description !== 'string' ||
       typeof product.image !== 'string' ||
-      (product.price !== undefined && typeof product.price !== 'string')
+      (product.price !== undefined && typeof product.price !== 'string') ||
+      (product.options !== undefined && (!Array.isArray(product.options) || product.options.some(option =>
+        !option || typeof option.label !== 'string' || typeof option.price !== 'string' ||
+        (option.image !== undefined && typeof option.image !== 'string')
+      )))
     )) {
       throw new Error('Gallery products contain invalid or missing fields.');
     }
@@ -106,15 +110,43 @@ document.addEventListener('DOMContentLoaded', () => {
       const description = document.createElement('p');
       description.className = 'gi-sub';
       description.textContent = product.description;
-      const price = document.createElement('div');
-      price.className = 'gi-price';
-      const priceValue = document.createElement('strong');
-      priceValue.textContent = product.price || 'Price on request';
-      const priceNote = document.createElement('span');
-      priceNote.textContent = product.price ? 'Confirm current price and availability' : 'Ask about sizes & availability';
-      price.append(priceValue, priceNote);
-
-      body.append(tag, title, price, description);
+      const options = Array.isArray(product.options) ? product.options : [];
+      if (options.length) {
+        const list = document.createElement('ul');
+        list.className = 'gi-options';
+        options.forEach(option => {
+          const row = document.createElement('li');
+          row.className = 'gi-option';
+          if (option.image) {
+            const thumb = document.createElement('img');
+            thumb.className = 'gi-option-thumb';
+            thumb.src = option.image;
+            thumb.alt = '';
+            thumb.loading = 'lazy';
+            thumb.decoding = 'async';
+            row.append(thumb);
+          }
+          const text = document.createElement('span');
+          text.className = 'gi-option-text';
+          const optionName = document.createElement('strong');
+          optionName.textContent = option.label;
+          const optionPrice = document.createElement('span');
+          optionPrice.textContent = option.price;
+          text.append(optionName, optionPrice);
+          row.append(text);
+          list.append(row);
+        });
+        body.append(tag, title, description, list);
+      } else {
+        const price = document.createElement('div');
+        price.className = 'gi-price';
+        const priceValue = document.createElement('strong');
+        priceValue.textContent = product.price || 'Price on request';
+        const priceNote = document.createElement('span');
+        priceNote.textContent = product.price ? 'Confirm current price and availability' : 'Ask about sizes & availability';
+        price.append(priceValue, priceNote);
+        body.append(tag, title, price, description);
+      }
 
       const actions = document.createElement('div');
       actions.className = 'gi-actions';
@@ -317,6 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- Order list -------------------------------------------------------------------
   // Visitors pick quantities on the product cards and send the finished list to WhatsApp.
   // The list only lives on the page: it is turned into the WhatsApp message and nothing else.
+  // A product with options (for example bottled or wrapped) gets one quantity control per option.
   const orderPanel = document.getElementById('orderPanel');
   const orderLines = document.getElementById('orderLines');
   const orderTotal = document.getElementById('orderTotal');
@@ -327,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const orderBar = document.getElementById('orderBar');
   const orderBarText = document.getElementById('orderBarText');
   const orderBarButton = document.getElementById('orderBarButton');
-  const order = new Map(); // product title -> { price, naira, qty }
+  const order = new Map(); // order key -> { name, price, naira, qty }
   let productsInView = false;
   let orderPanelInView = false;
 
@@ -355,8 +388,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const orderMessage = items => {
     const lines = ["Hello C.Zara, I'd like to order:"];
-    items.forEach(([title, item]) => {
-      lines.push(`- ${item.qty} × ${title}${item.price ? ` (${item.price})` : ''}`);
+    items.forEach(([, item]) => {
+      lines.push(`- ${item.qty} × ${item.name}${item.price ? ` (${item.price})` : ''}`);
     });
     lines.push('', totalText(orderTotals(items)));
     const name = orderName ? orderName.value.trim() : '';
@@ -383,30 +416,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const totals = orderTotals(items);
     orderPanel.hidden = items.length === 0;
 
-    document.querySelectorAll('.gallery-item').forEach(card => {
-      const title = card.dataset.orderTitle;
-      const quantity = order.has(title) ? order.get(title).qty : 0;
-      const value = card.querySelector('.qty-value');
-      const minus = card.querySelector('[data-qty="-1"]');
+    document.querySelectorAll('.qty-stepper').forEach(stepper => {
+      const key = stepper.dataset.orderKey;
+      const quantity = order.has(key) ? order.get(key).qty : 0;
+      const value = stepper.querySelector('.qty-value');
+      const minus = stepper.querySelector('[data-qty="-1"]');
       if (value) value.textContent = String(quantity);
       if (minus) minus.disabled = quantity === 0;
-      card.classList.toggle('in-order', quantity > 0);
+    });
+    document.querySelectorAll('.gallery-item').forEach(card => {
+      const active = Array.from(card.querySelectorAll('.qty-stepper')).some(stepper => order.has(stepper.dataset.orderKey));
+      card.classList.toggle('in-order', active);
     });
 
-    const rows = items.map(([title, item]) => {
+    const rows = items.map(([key, item]) => {
       const row = document.createElement('li');
       const name = document.createElement('span');
       name.className = 'order-line-name';
-      name.textContent = `${item.qty} × ${title}`;
+      name.textContent = `${item.qty} × ${item.name}`;
       const price = document.createElement('span');
       price.className = 'order-line-price';
       price.textContent = item.naira === null ? 'Price on request' : naira(item.naira * item.qty);
       const remove = document.createElement('button');
       remove.type = 'button';
       remove.className = 'order-remove';
-      remove.dataset.orderRemove = title;
+      remove.dataset.orderRemove = key;
       remove.textContent = 'Remove';
-      remove.setAttribute('aria-label', `Remove ${title} from your order`);
+      remove.setAttribute('aria-label', `Remove ${item.name} from your order`);
       row.append(name, price, remove);
       return row;
     });
@@ -419,31 +455,65 @@ document.addEventListener('DOMContentLoaded', () => {
     updateOrderBar();
   };
 
-  const changeQuantity = (title, price, change) => {
-    const current = order.get(title) || { price, naira: parseNaira(price), qty: 0 };
+  const changeQuantity = (stepper, change) => {
+    const key = stepper.dataset.orderKey;
+    const price = stepper.dataset.orderPrice || '';
+    const current = order.get(key) || { name: stepper.dataset.orderName, price, naira: parseNaira(price), qty: 0 };
     current.price = price;
     current.naira = parseNaira(price);
     current.qty = Math.min(99, Math.max(0, current.qty + change));
-    if (current.qty === 0) order.delete(title);
-    else order.set(title, current);
+    if (current.qty === 0) order.delete(key);
+    else order.set(key, current);
     updateOrder();
   };
 
-  // Adds the quantity control to every product card (the built-in ones and the ones the
-  // content file renders), reading the name and price straight from the card.
+  const makeStepper = (name, price) => {
+    const stepper = document.createElement('div');
+    stepper.className = 'qty-stepper';
+    stepper.dataset.orderKey = name;
+    stepper.dataset.orderName = name;
+    stepper.dataset.orderPrice = price;
+    const minus = document.createElement('button');
+    minus.type = 'button';
+    minus.className = 'qty-btn';
+    minus.dataset.qty = '-1';
+    minus.disabled = true;
+    minus.textContent = '−';
+    minus.setAttribute('aria-label', `Remove one ${name}`);
+    const value = document.createElement('output');
+    value.className = 'qty-value';
+    value.textContent = '0';
+    const plus = document.createElement('button');
+    plus.type = 'button';
+    plus.className = 'qty-btn';
+    plus.dataset.qty = '1';
+    plus.textContent = '+';
+    plus.setAttribute('aria-label', `Add one ${name}`);
+    stepper.append(minus, value, plus);
+    return stepper;
+  };
+
+  // Adds the quantity controls to every product card (the built-in ones and the ones the
+  // content file renders), reading names and prices straight from the card.
   function enhanceOrderCards() {
     if (!orderPanel) return;
-    const titles = new Set();
     document.querySelectorAll('.gallery-item').forEach(card => {
       const heading = card.querySelector('.gi-title');
       const actions = card.querySelector('.gi-actions');
       if (!heading || !actions) return;
       const title = heading.textContent.trim();
-      titles.add(title);
-      card.dataset.orderTitle = title;
-      card.dataset.orderPrice = (card.querySelector('.gi-price strong') || {}).textContent || '';
+      const optionRows = card.querySelectorAll('.gi-option');
+      if (optionRows.length) {
+        optionRows.forEach(row => {
+          if (row.querySelector('.qty-stepper')) return;
+          const label = (row.querySelector('.gi-option-text strong') || {}).textContent || '';
+          const price = (row.querySelector('.gi-option-text span') || {}).textContent || '';
+          row.append(makeStepper(`${title} – ${label.trim()}`, price.trim()));
+        });
+        return;
+      }
       if (card.querySelector('.gi-qty')) return;
-
+      const price = (card.querySelector('.gi-price strong') || {}).textContent || '';
       const control = document.createElement('div');
       control.className = 'gi-qty';
       control.setAttribute('role', 'group');
@@ -451,30 +521,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const label = document.createElement('span');
       label.className = 'qty-label';
       label.textContent = 'Add to order';
-      const stepper = document.createElement('div');
-      stepper.className = 'qty-stepper';
-      const minus = document.createElement('button');
-      minus.type = 'button';
-      minus.className = 'qty-btn';
-      minus.dataset.qty = '-1';
-      minus.disabled = true;
-      minus.textContent = '−';
-      minus.setAttribute('aria-label', `Remove one ${title}`);
-      const value = document.createElement('output');
-      value.className = 'qty-value';
-      value.textContent = '0';
-      const plus = document.createElement('button');
-      plus.type = 'button';
-      plus.className = 'qty-btn';
-      plus.dataset.qty = '1';
-      plus.textContent = '+';
-      plus.setAttribute('aria-label', `Add one ${title}`);
-      stepper.append(minus, value, plus);
-      control.append(label, stepper);
+      control.append(label, makeStepper(title, price.trim()));
       actions.before(control);
     });
-    Array.from(order.keys()).forEach(title => {
-      if (!titles.has(title)) order.delete(title);
+    const keys = new Set(Array.from(document.querySelectorAll('.qty-stepper')).map(stepper => stepper.dataset.orderKey));
+    Array.from(order.keys()).forEach(key => {
+      if (!keys.has(key)) order.delete(key);
     });
     updateOrder();
   }
@@ -483,10 +535,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (galleryGridForOrder) {
     galleryGridForOrder.addEventListener('click', event => {
       const button = event.target.closest('.qty-btn');
-      if (!button) return;
-      const card = button.closest('.gallery-item');
-      if (!card) return;
-      changeQuantity(card.dataset.orderTitle, card.dataset.orderPrice, Number(button.dataset.qty));
+      const stepper = button && button.closest('.qty-stepper');
+      if (!stepper) return;
+      changeQuantity(stepper, Number(button.dataset.qty));
     });
   }
   if (orderLines) {
