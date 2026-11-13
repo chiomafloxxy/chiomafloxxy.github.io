@@ -784,7 +784,7 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 .site-hero-tiles {
   display: grid; gap: .6rem; aspect-ratio: 1 / 1;
   grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr));
-  grid-template-areas: "honey honey ukwa" "honey honey nuts" "oil oil brand";
+  grid-template-areas: "main main top" "main main nuts" "oil oil brand";
 }
 .hero-tile {
   position: relative; margin: 0; overflow: hidden; border-radius: 16px; background: #ece6da;
@@ -798,8 +798,8 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
   background: rgba(255, 255, 255, .94); color: var(--brown-dark);
   font: 600 .66rem/1 'Poppins', sans-serif; letter-spacing: .04em; box-shadow: 0 4px 12px rgba(39, 31, 22, .14);
 }
-.tile-honey { grid-area: honey; animation-delay: .15s; }
-.tile-ukwa { grid-area: ukwa; animation-delay: .3s; }
+.tile-main { grid-area: main; animation-delay: .15s; }
+.tile-top { grid-area: top; animation-delay: .3s; }
 .tile-nuts { grid-area: nuts; animation-delay: .45s; }
 .tile-oil { grid-area: oil; animation-delay: .6s; }
 .tile-oil img { object-position: center 40%; }

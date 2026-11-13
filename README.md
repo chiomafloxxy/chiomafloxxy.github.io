@@ -32,7 +32,7 @@ After enabling Pages, the product catalogue can be managed through Sveltia CMS a
 3. Open **Gallery Page → Products** to add, edit, or remove products. Set the category, name, description, photo, and optionally the price/pack size (for example, `₦27,600 / 500g`).
 4. Save the changes. CMS commits them to the configured `main` branch, and GitHub Pages republishes the site.
 
-Product photos uploaded through the CMS are stored in `assets/images/products/`. The red palm oil, groundnut, cashew, garri and ukwa photos there are the shop's own pictures, cropped square. If adding a photo directly in GitHub, also add a product entry in `content/gallery.json` and use an image path such as `assets/images/products/new-product.jpg`. The optional `price` value is displayed as entered, so include both the Naira amount and pack size; leave it blank to display “Price on request.” Customers confirm current prices, availability, and delivery with the business by phone or WhatsApp. The static site does not take online payments or process checkout. The catalogue shows up to six products per page; once there are more than six, the category tabs and Previous/Next buttons appear automatically.
+Product photos uploaded through the CMS are stored in `assets/images/products/`. All the product photos there are the shop's own pictures, cropped square. If adding a photo directly in GitHub, also add a product entry in `content/gallery.json` and use an image path such as `assets/images/products/new-product.jpg`. The optional `price` value is displayed as entered, so include both the Naira amount and pack size; leave it blank to display “Price on request.” Customers confirm current prices, availability, and delivery with the business by phone or WhatsApp. The static site does not take online payments or process checkout. The catalogue shows up to six products per page; once there are more than six, the category tabs and Previous/Next buttons appear automatically.
 
 The CMS GitHub repository, branch, and image URL base are set in `admin/config.yml`. They are configured for the `chiomafloxxy/chiomafloxxy.github.io` root site (public image URL base `/assets/images/products`).
 
@@ -42,7 +42,7 @@ The collage at the top of the page uses the four product photos in `assets/image
 
 ## Products with more than one pack or price
 
-Some products come in different packs with different prices (for example groundnuts, bottled at ₦4,000 and in small wrapped packs at ₦100 each; cashew nuts, wrapped at ₦500 each and by the 400g). In the CMS, open the product, leave **Price and Pack Size** blank, and add **Options**: a name, a price and an optional photo for each. The card then lists each option with its own price and quantity buttons, and the order list treats each option as its own line. The `options` list in `content/gallery.json` is where this is stored.
+Some products come in different packs with different prices (for example groundnuts, bottled at ₦4,000 and in small wrapped packs at ₦100 each; cashew nuts, bottled at ₦6,500 / 400g and in small wrapped packs at ₦500 each). In the CMS, open the product, leave **Price and Pack Size** blank, and add **Options**: a name, a price and an optional photo for each. The card then lists each option with its own price and quantity buttons, and the order list treats each option as its own line. The `options` list in `content/gallery.json` is where this is stored.
 
 ## Areas we serve
 

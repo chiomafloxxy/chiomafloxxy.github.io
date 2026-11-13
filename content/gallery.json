@@ -19,17 +19,18 @@
     {
       "category": "nuts",
       "title": "Cashew Nuts",
-      "description": "Cashew nuts, in small wrapped packs or by the 400g.",
+      "description": "Cashew nuts, in bottles or in small wrapped packs.",
       "image": "assets/images/products/cashew-nuts.jpg",
       "options": [
         {
-          "label": "Small wrapped pack",
-          "price": "₦500 each",
+          "label": "Bottled",
+          "price": "₦6,500 / 400g",
           "image": "assets/images/products/cashew-nuts.jpg"
         },
         {
-          "label": "By weight",
-          "price": "₦6,500 / 400g"
+          "label": "Small wrapped pack",
+          "price": "₦500 each",
+          "image": "assets/images/products/cashew-nuts-wrapped.jpg"
         }
       ]
     },
