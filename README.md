@@ -48,6 +48,15 @@ Some products come in different packs with different prices (for example groundn
 
 The list of areas in the Contact section (Kurudu, Karu, Nyanya, Garki, Wuse, Maitama, Gwarinpa, Lugbe, Mararaba, Nasarawa, Onitsha, Enugu, Lagos and Port Harcourt) is written in `index.html` inside `site-area-list`, and the same places are in the `areaServed` list in the head of `index.html` for Google. Change both when the areas change.
 
+## Delivery location
+
+In the "Your order" box the customer can tap **Share my location**. The browser asks for permission first. If they allow it, the box shows a live Google map with a pin, the place name, the coordinates and how accurate the position is, plus an **Open in Google Maps** link. The place name, a Google Maps link and the accuracy are added to the WhatsApp message, so Florence can tap the link and navigate straight to the customer.
+
+- It only starts when the customer taps the button, and it stops when they tap **Stop sharing**, clear or empty the order, hide the page, or send the order (the position then stays in the message but is no longer followed). Nothing is stored and nothing is sent anywhere except the WhatsApp message the customer chooses to send. If they say no, they can still type a delivery area.
+- The map is the Google Maps embed (`maps.google.com/maps?...&output=embed`, no key needed) and the place name comes from OpenStreetMap's free Nominatim lookup. If the place-name lookup is unavailable the order still works and the message uses the map link. Both are free services meant for light use, which suits a small shop. If the shop ever gets very busy, replace them with a Google Maps API key.
+- Location sharing needs the site to be on `https`, which GitHub Pages is. It works on phones and laptops with location switched on.
+- A website cannot follow someone around in the background, and this one does not try to. For real-time tracking while a delivery is on the way, ask the customer to use WhatsApp's **Share live location** in the chat.
+
 ## Order list
 
 Each product card has a quantity control (a product that comes in different packs, such as bottled or wrapped groundnuts, has one for each option). Customers pick what they want, add an optional name and delivery area, and tap **Send order on WhatsApp**. WhatsApp opens with the list already written (items, quantities, estimated total) addressed to the business number. The total is worked out from the Naira amount at the start of each price, such as `₦5,160 / 400g` or `₦100 each`. Products with no price show "Price on request" and are left out of the total. Customers are told that the final price is confirmed on WhatsApp. The list exists only on the page while it is open; nothing is saved anywhere. It works from the product text on the page, so new products added through the CMS get it automatically.

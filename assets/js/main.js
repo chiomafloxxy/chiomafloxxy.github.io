@@ -363,6 +363,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const order = new Map(); // order key -> { name, price, naira, qty }
   let productsInView = false;
   let orderPanelInView = false;
+  let deliveryFix = null; // { lat, lng, accuracy } once the visitor has chosen to share their location
+  let deliveryPlace = ''; // place name found for that position
+  let locWatchId = null;
 
   const naira = value => `₦${value.toLocaleString('en-US')}`;
   const parseNaira = text => {
@@ -396,6 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const area = orderArea ? orderArea.value.trim() : '';
     if (name) lines.push(`My name: ${name}`);
     if (area) lines.push(`Delivery area: ${area}`);
+    lines.push(...locationLines());
     lines.push('', 'Please confirm availability, the final price and delivery. Thank you.');
     return lines.join('\n');
   };
@@ -415,6 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const items = orderItems();
     const totals = orderTotals(items);
     orderPanel.hidden = items.length === 0;
+    if (!items.length && (deliveryFix || locWatchId !== null)) stopLocation();
 
     document.querySelectorAll('.qty-stepper').forEach(stepper => {
       const key = stepper.dataset.orderKey;
@@ -573,6 +578,205 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     productsInView = true;
   }
+
+  // ---- Delivery location (opt-in) -----------------------------------------------------
+  // The visitor taps "Share my location" and the browser asks permission first. While they are
+  // looking at the order the position is followed on a Google map; the place name and a map link
+  // are added to the WhatsApp message they send. Nothing is stored and nothing is sent anywhere
+  // else, and sharing stops when they press Stop, clear the order or leave the page.
+  const locBox = document.getElementById('orderLocation');
+  const locSupported = Boolean(locBox) && 'geolocation' in navigator;
+  const locParts = locBox ? Array.from(locBox.querySelectorAll('[data-loc]')) : [];
+  const locEl = id => document.getElementById(id);
+  const locMap = locEl('locMap');
+  const locPlace = locEl('locPlace');
+  const locCoords = locEl('locCoords');
+  const locAccuracy = locEl('locAccuracy');
+  const locOpen = locEl('locOpen');
+  const locBadge = locEl('locBadge');
+  const locBadgeText = locEl('locBadgeText');
+  const locError = locEl('locError');
+  const locShareText = locEl('locShareText');
+  let locPaused = false;
+  let locFrozen = false;
+  let locMapAt = null;
+  let locGeoAt = null;
+  let locGeoToken = 0;
+
+  const mapsLink = fix => `https://www.google.com/maps?q=${fix.lat.toFixed(6)},${fix.lng.toFixed(6)}`;
+  const metresBetween = (a, b) => {
+    const rad = degrees => degrees * Math.PI / 180;
+    const x = rad(b.lng - a.lng) * Math.cos(rad((a.lat + b.lat) / 2));
+    const y = rad(b.lat - a.lat);
+    return Math.sqrt(x * x + y * y) * 6371000;
+  };
+  const setLocState = state => {
+    if (!locBox) return;
+    locBox.dataset.state = state;
+    locParts.forEach(part => {
+      part.hidden = part.dataset.loc !== (state === 'error' ? 'idle' : state);
+    });
+  };
+
+  function locationLines() {
+    if (!deliveryFix) return [];
+    const lines = [
+      `Delivery location: ${deliveryPlace || 'my current location'}`,
+      `Map: ${mapsLink(deliveryFix)}`
+    ];
+    if (deliveryFix.accuracy) lines.push(`Location accuracy: about ${Math.round(deliveryFix.accuracy)} m`);
+    return lines;
+  }
+
+  const placeFromAddress = data => {
+    const address = (data && data.address) || {};
+    const parts = [];
+    [
+      address.road || address.pedestrian || '',
+      address.neighbourhood || address.suburb || address.quarter || address.village || address.hamlet || address.residential || '',
+      address.town || address.city || address.city_district || address.municipality || address.county || '',
+      address.state || ''
+    ].forEach(part => {
+      if (part && !parts.includes(part)) parts.push(part);
+    });
+    if (parts.length) return parts.slice(0, 3).join(', ');
+    return String((data && data.display_name) || '').split(',').slice(0, 3).join(',').trim();
+  };
+
+  const lookupPlace = async fix => {
+    const token = ++locGeoToken;
+    locGeoAt = { lat: fix.lat, lng: fix.lng, time: Date.now() };
+    const controller = typeof AbortController === 'function' ? new AbortController() : null;
+    const timer = setTimeout(() => controller && controller.abort(), 8000);
+    let place = '';
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&addressdetails=1&accept-language=en&lat=${fix.lat}&lon=${fix.lng}`;
+      const response = await fetch(url, controller ? { signal: controller.signal } : undefined);
+      if (!response.ok) throw new Error(`Place lookup failed with status ${response.status}`);
+      place = placeFromAddress(await response.json());
+    } catch (error) {
+      place = '';
+    } finally {
+      clearTimeout(timer);
+    }
+    if (token !== locGeoToken || !deliveryFix) return;
+    deliveryPlace = place;
+    if (locPlace) locPlace.textContent = place || 'Pinned on the map';
+    updateOrderLink();
+  };
+
+  const renderLocation = () => {
+    if (!deliveryFix) return;
+    const now = Date.now();
+    if (locCoords) locCoords.textContent = `${deliveryFix.lat.toFixed(5)}, ${deliveryFix.lng.toFixed(5)}`;
+    if (locAccuracy) locAccuracy.textContent = deliveryFix.accuracy ? `± ${Math.round(deliveryFix.accuracy)} m` : '';
+    if (locOpen) locOpen.href = mapsLink(deliveryFix);
+    if (locBadge) locBadge.classList.toggle('is-saved', locFrozen);
+    if (locBadgeText) locBadgeText.textContent = locFrozen ? 'Saved' : 'Live';
+    if (locMap && (!locMapAt || (metresBetween(locMapAt, deliveryFix) > 15 && now - locMapAt.time > 4000))) {
+      locMap.src = `https://maps.google.com/maps?q=${deliveryFix.lat},${deliveryFix.lng}&z=17&output=embed&hl=en`;
+      locMapAt = { lat: deliveryFix.lat, lng: deliveryFix.lng, time: now };
+    }
+    if (!locGeoAt || (metresBetween(locGeoAt, deliveryFix) > 60 && now - locGeoAt.time > 10000)) lookupPlace(deliveryFix);
+  };
+
+  const onLocation = position => {
+    const first = !deliveryFix;
+    deliveryFix = { lat: position.coords.latitude, lng: position.coords.longitude, accuracy: position.coords.accuracy || 0 };
+    if (first) {
+      deliveryPlace = '';
+      if (locPlace) locPlace.textContent = 'Finding the place name…';
+      setLocState('live');
+    }
+    renderLocation();
+    updateOrderLink();
+  };
+
+  const clearLocationWatch = () => {
+    if (locWatchId !== null) {
+      navigator.geolocation.clearWatch(locWatchId);
+      locWatchId = null;
+    }
+  };
+  const beginLocationWatch = () => {
+    clearLocationWatch();
+    locWatchId = navigator.geolocation.watchPosition(onLocation, onLocationError, { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 });
+  };
+
+  function onLocationError(error) {
+    // A short signal drop while we already have a position is not worth interrupting the visitor for.
+    if (deliveryFix && error.code !== 1) return;
+    clearLocationWatch();
+    deliveryFix = null;
+    deliveryPlace = '';
+    locMapAt = null;
+    locGeoAt = null;
+    locGeoToken += 1;
+    const messages = {
+      1: 'Location is switched off for this site. You can allow it in your browser settings, or just type your delivery area above.',
+      2: 'We couldn’t work out where you are. Please type your delivery area above.',
+      3: 'That took too long. Check your signal and try again.'
+    };
+    if (locError) {
+      locError.textContent = messages[error.code] || messages[2];
+      locError.hidden = false;
+    }
+    if (locShareText) locShareText.textContent = 'Try again';
+    setLocState('error');
+    updateOrderLink();
+  }
+
+  function stopLocation() {
+    clearLocationWatch();
+    locPaused = false;
+    locFrozen = false;
+    deliveryFix = null;
+    deliveryPlace = '';
+    locMapAt = null;
+    locGeoAt = null;
+    locGeoToken += 1;
+    if (locMap) locMap.removeAttribute('src');
+    if (locError) locError.hidden = true;
+    if (locShareText) locShareText.textContent = 'Share my location';
+    setLocState('idle');
+    updateOrderLink();
+  }
+
+  if (locBox) {
+    if (!locSupported) {
+      locBox.hidden = true;
+    } else {
+      locEl('locShare').addEventListener('click', () => {
+        if (locError) locError.hidden = true;
+        locFrozen = false;
+        setLocState('locating');
+        beginLocationWatch();
+      });
+      locEl('locStop').addEventListener('click', stopLocation);
+      // Once the order is sent the position stops being followed; it stays in the message.
+      if (orderSend) {
+        orderSend.addEventListener('click', () => {
+          if (!deliveryFix || locFrozen) return;
+          locFrozen = true;
+          clearLocationWatch();
+          renderLocation();
+        });
+      }
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          if (locWatchId !== null) {
+            clearLocationWatch();
+            locPaused = true;
+          }
+        } else if (locPaused && !locFrozen) {
+          locPaused = false;
+          beginLocationWatch();
+        }
+      });
+      window.addEventListener('pagehide', clearLocationWatch);
+    }
+  }
+
   enhanceOrderCards();
 
   document.querySelectorAll('[data-current-year]').forEach(element => {

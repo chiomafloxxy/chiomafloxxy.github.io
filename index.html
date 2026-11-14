@@ -180,6 +180,36 @@
         <label>Your name (optional)<input id="orderName" type="text" maxlength="60" autocomplete="name"></label>
         <label>Delivery area (optional)<input id="orderArea" type="text" maxlength="60" placeholder="For example, Karu"></label>
       </div>
+      <div class="order-location" id="orderLocation" data-state="idle">
+        <div class="loc-prompt" data-loc="idle">
+          <span class="loc-icon" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span>
+          <div class="loc-copy">
+            <strong>Share your delivery location</strong>
+            <p>So Florence knows exactly where to bring your order. Your browser will ask first, and the location only goes into the WhatsApp message you send.</p>
+            <p class="loc-error" id="locError" role="alert" hidden></p>
+          </div>
+          <button class="loc-share" id="locShare" type="button"><i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i> <span id="locShareText">Share my location</span></button>
+        </div>
+        <div class="loc-working" data-loc="locating" role="status" hidden>
+          <span class="loc-spinner" aria-hidden="true"></span>
+          <div><strong>Finding you…</strong><p>Tap “Allow” if your phone asks.</p></div>
+        </div>
+        <div class="loc-card" data-loc="live" hidden>
+          <div class="loc-head">
+            <span class="loc-title"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Delivery location</span>
+            <span class="loc-badge" id="locBadge"><i class="loc-dot" aria-hidden="true"></i><span id="locBadgeText">Live</span></span>
+          </div>
+          <div class="loc-map"><iframe id="locMap" title="Map showing your delivery location" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
+          <div class="loc-info">
+            <strong class="loc-place" id="locPlace">Finding the place name…</strong>
+            <span class="loc-meta"><span id="locCoords"></span><span id="locAccuracy"></span></span>
+          </div>
+          <div class="loc-actions">
+            <a class="loc-open" id="locOpen" href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Open in Google Maps</a>
+            <button class="loc-stop" id="locStop" type="button">Stop sharing</button>
+          </div>
+        </div>
+      </div>
       <div class="order-actions">
         <a class="order-send" id="orderSend" href="https://wa.me/2348060561101" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Send order on WhatsApp</a>
         <button class="order-clear" id="orderClear" type="button">Clear</button>
