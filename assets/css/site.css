@@ -975,3 +975,4 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
   .loc-share { grid-column: auto; }
 }
 @media (max-width: 600px) { .loc-map { height: 200px; } }
+.loc-note { color: var(--green-main); font-size: .74rem; line-height: 1.5; }

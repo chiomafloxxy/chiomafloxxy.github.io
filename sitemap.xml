@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://chiomafloxxy.github.io/</loc></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://chiomafloxxy.github.io/</loc>
+    <lastmod>2026-11-15</lastmod>
+    <image:image><image:loc>https://chiomafloxxy.github.io/assets/images/products/natural-honey.jpg</image:loc></image:image>
+    <image:image><image:loc>https://chiomafloxxy.github.io/assets/images/products/cashew-nuts.jpg</image:loc></image:image>
+    <image:image><image:loc>https://chiomafloxxy.github.io/assets/images/products/cashew-nuts-wrapped.jpg</image:loc></image:image>
+    <image:image><image:loc>https://chiomafloxxy.github.io/assets/images/products/groundnuts.jpg</image:loc></image:image>
+    <image:image><image:loc>https://chiomafloxxy.github.io/assets/images/products/groundnuts-wrapped.jpg</image:loc></image:image>
+    <image:image><image:loc>https://chiomafloxxy.github.io/assets/images/products/red-palm-oil.jpg</image:loc></image:image>
+    <image:image><image:loc>https://chiomafloxxy.github.io/assets/images/products/garri.jpg</image:loc></image:image>
+    <image:image><image:loc>https://chiomafloxxy.github.io/assets/images/products/ukwa.jpg</image:loc></image:image>
+    <image:image><image:loc>https://chiomafloxxy.github.io/assets/images/florence-chioma.jpg</image:loc></image:image>
+  </url>
 </urlset>

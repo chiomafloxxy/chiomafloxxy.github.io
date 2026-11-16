@@ -48,12 +48,31 @@ Some products come in different packs with different prices (for example groundn
 
 The list of areas in the Contact section (Kurudu, Karu, Nyanya, Garki, Wuse, Maitama, Gwarinpa, Lugbe, Mararaba, Nasarawa, Onitsha, Enugu, Lagos and Port Harcourt) is written in `index.html` inside `site-area-list`, and the same places are in the `areaServed` list in the head of `index.html` for Google. Change both when the areas change.
 
+## Speed and many visitors
+
+The site is plain files on GitHub Pages, so there is no server of ours to overload: GitHub's network serves every visitor, and thousands at once is fine. What costs bandwidth is the size of the page, so it is kept small: the whole page is about 700 KB including every product photo, and the part seen first is about 400 KB.
+
+- Photos are 720 px or smaller and roughly 35 to 110 KB each. When adding a photo, crop it square, keep it near 720 px wide and save it as a JPEG at about 80% quality.
+- The icon fonts in `assets/fontawesome/webfonts/fa-solid-900.woff2` and `fa-brands-400.woff2` contain only the 26 icons the site uses (4 KB instead of 225 KB). If a new icon is ever added to the page, download Font Awesome Free 7 from fontawesome.com and put its full `fa-solid-900.woff2` and `fa-brands-400.woff2` back in that folder, or re-run a font subset that includes the new icon, otherwise the new icon will show as an empty box.
+- GitHub Pages has soft limits (about 100 GB of downloads a month, 1 GB of files). At this page size that is well over 100,000 visits a month. If the shop ever grows past that, or wants its own web address, the same files can move to Cloudflare Pages or Netlify unchanged.
+
+## Being found on Google
+
+What is already in place: a clear title, description and headings that use the real product and place names; `LocalBusiness` and product details (names, prices in naira) for Google, which refresh from `content/gallery.json`; a sitemap listing the page and the product photos; descriptive picture text; an icon file for the browser tab and for Google's results; and a page that works fast on phones. Nothing can guarantee a ranking or an exact date, but these are the things that decide it, and the steps below are what make Google find the site sooner. They need the owner's Google account, so they have to be done by a person.
+
+1. **Google Search Console** (search.google.com/search-console). Add a "URL prefix" property for `https://chiomafloxxy.github.io/`. Choose the **HTML tag** way to verify and copy the `<meta name="google-site-verification" ...>` line it shows. Paste it in the `<head>` of `index.html` just under the `robots` line, publish, then press Verify.
+2. In Search Console, open **Sitemaps**, enter `sitemap.xml` and submit.
+3. Open **URL inspection**, paste `https://chiomafloxxy.github.io/`, wait for the check and press **Request indexing**. This is the fastest way to get a new page looked at, often within a day or two.
+4. **Google Business Profile** (business.google.com): create a free profile for C.Zara Enterprise with the Kurudu location, phone, hours, products and the website address. This is what makes the shop appear on Google Maps and in "honey near me" searches, and it usually matters more for a local shop than anything on the website itself.
+5. Put the website address in every place the shop already has: the WhatsApp Business profile, Facebook and Instagram bios, and any listings. Links from other sites are how Google finds new sites quickly.
+6. After changing prices or products, update the date in `sitemap.xml` (`lastmod`) and, if it matters, request indexing again.
+
 ## Delivery location
 
 In the "Your order" box the customer can tap **Share my location**. The browser asks for permission first. If they allow it, the box shows a live Google map with a pin, the place name, the coordinates and how accurate the position is, plus an **Open in Google Maps** link. The place name, a Google Maps link and the accuracy are added to the WhatsApp message, so Florence can tap the link and navigate straight to the customer.
 
-- It only starts when the customer taps the button, and it stops when they tap **Stop sharing**, clear or empty the order, hide the page, or send the order (the position then stays in the message but is no longer followed). Nothing is stored and nothing is sent anywhere except the WhatsApp message the customer chooses to send. If they say no, they can still type a delivery area.
-- The map is the Google Maps embed (`maps.google.com/maps?...&output=embed`, no key needed) and the place name comes from OpenStreetMap's free Nominatim lookup. If the place-name lookup is unavailable the order still works and the message uses the map link. Both are free services meant for light use, which suits a small shop. If the shop ever gets very busy, replace them with a Google Maps API key.
+- The first time, it only starts when the customer taps the button, and the browser asks for permission. After a successful share the site remembers that choice on that device (a small `on`/`off` flag in the browser's storage, never the position itself). On later visits, if the browser still allows location, sharing starts by itself as soon as the customer adds something to their order, with a note and a **Stop sharing** button. Tapping **Stop sharing** switches the memory off until they choose to share again. The site never triggers a second permission question: if the browser has forgotten the permission, the customer just sees the normal button. Browsers decide how long they remember an "Allow" (some phones ask again for each session), and the site cannot change that.
+- The map is the Google Maps embed (`maps.google.com/maps?...&output=embed`, no key needed) and the place name comes from OpenStreetMap's free Nominatim lookup, with BigDataCloud's free lookup as a backup. If both are unavailable the order still works and the message uses the map link. Both are free services meant for light use, which suits a small shop. If the shop ever gets very busy, replace them with a Google Maps API key.
 - Location sharing needs the site to be on `https`, which GitHub Pages is. It works on phones and laptops with location switched on.
 - A website cannot follow someone around in the background, and this one does not try to. For real-time tracking while a delivery is on the way, ask the customer to use WhatsApp's **Share live location** in the chat.
 

@@ -16,6 +16,45 @@ document.addEventListener('DOMContentLoaded', () => {
   let galleryFilter = 'all';
   let galleryPage = 1;
 
+  // Describes the products to search engines (Google reads this). It is written into the page ahead of
+  // time and refreshed here from content/gallery.json so it never drifts from what the CMS shows.
+  const updateProductsLd = products => {
+    const node = document.getElementById('productsLd');
+    if (!node) return;
+    const canonical = document.querySelector('link[rel="canonical"]');
+    const base = canonical ? canonical.href : `${location.origin}/`;
+    const absolute = path => (/^https?:/.test(path) ? path : new URL(path, base).href);
+    const amount = text => {
+      const match = /₦\s*([\d,]+(?:\.\d+)?)/.exec(text || '');
+      return match ? match[1].replace(/,/g, '') : null;
+    };
+    const offer = (name, price) => {
+      const value = amount(price);
+      if (value === null) return null;
+      const result = { '@type': 'Offer' };
+      if (name) result.name = name;
+      result.price = value;
+      result.priceCurrency = 'NGN';
+      result.url = `${base}#products`;
+      return result;
+    };
+    const list = products.map((product, index) => {
+      const offers = (Array.isArray(product.options) && product.options.length
+        ? product.options.map(option => offer(option.label, option.price))
+        : [offer('', product.price)]).filter(Boolean);
+      const item = {
+        '@type': 'Product',
+        name: product.title,
+        description: product.description,
+        image: absolute(product.image),
+        brand: { '@type': 'Brand', name: 'C.Zara Enterprise' }
+      };
+      if (offers.length) item.offers = offers.length === 1 ? offers[0] : offers;
+      return { '@type': 'ListItem', position: index + 1, item };
+    });
+    node.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'ItemList', name: 'C.Zara Enterprise products', itemListElement: list });
+  };
+
   const validateGallery = products => {
     if (!Array.isArray(products) || products.some(product =>
       !product || !['honey', 'nuts', 'oil', 'gifts', 'staples'].includes(product.category) ||
@@ -61,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const galleryGrid = document.getElementById('galleryGrid');
     if (!galleryGrid) return;
     galleryProducts = products;
+    updateProductsLd(products);
     galleryLoaded = true;
     document.querySelectorAll('[data-gallery-filter]').forEach(button => {
       button.hidden = button.dataset.galleryFilter !== 'all' &&
@@ -90,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (product.image) {
         const image = document.createElement('img');
         image.src = product.image;
-        image.alt = `${product.title} product photo`;
+        image.alt = `${product.title} by C.Zara Enterprise`;
         image.loading = 'lazy';
         image.decoding = 'async';
         art.append(image);
@@ -366,6 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let deliveryFix = null; // { lat, lng, accuracy } once the visitor has chosen to share their location
   let deliveryPlace = ''; // place name found for that position
   let locWatchId = null;
+  let locAutoTried = false;
 
   const naira = value => `₦${value.toLocaleString('en-US')}`;
   const parseNaira = text => {
@@ -420,6 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const totals = orderTotals(items);
     orderPanel.hidden = items.length === 0;
     if (!items.length && (deliveryFix || locWatchId !== null)) stopLocation();
+    if (items.length) maybeAutoStartLocation();
 
     document.querySelectorAll('.qty-stepper').forEach(stepper => {
       const key = stepper.dataset.orderKey;
@@ -597,6 +639,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const locBadgeText = locEl('locBadgeText');
   const locError = locEl('locError');
   const locShareText = locEl('locShareText');
+  const locNote = locEl('locNote');
+  let locPermission = 'unknown'; // 'granted' | 'prompt' | 'denied' | 'unknown', from the browser's Permissions API
+  let locAuto = false;
+  const LOC_PREF = 'czara-share-location';
+  const readLocPref = () => { try { return localStorage.getItem(LOC_PREF); } catch (error) { return null; } };
+  const writeLocPref = value => { try { localStorage.setItem(LOC_PREF, value); } catch (error) { /* storage can be blocked */ } };
   let locPaused = false;
   let locFrozen = false;
   let locMapAt = null;
@@ -643,21 +691,40 @@ document.addEventListener('DOMContentLoaded', () => {
     return String((data && data.display_name) || '').split(',').slice(0, 3).join(',').trim();
   };
 
+  // Each lookup gets its own time limit, so a slow first service cannot cancel the backup.
+  const fetchJsonWithin = async (url, milliseconds) => {
+    const controller = typeof AbortController === 'function' ? new AbortController() : null;
+    const timer = setTimeout(() => controller && controller.abort(), milliseconds);
+    try {
+      const response = await fetch(url, controller ? { signal: controller.signal } : undefined);
+      if (!response.ok) throw new Error(`Place lookup failed with status ${response.status}`);
+      return await response.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+
   const lookupPlace = async fix => {
     const token = ++locGeoToken;
     locGeoAt = { lat: fix.lat, lng: fix.lng, time: Date.now() };
-    const controller = typeof AbortController === 'function' ? new AbortController() : null;
-    const timer = setTimeout(() => controller && controller.abort(), 8000);
     let place = '';
     try {
-      const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&addressdetails=1&accept-language=en&lat=${fix.lat}&lon=${fix.lng}`;
-      const response = await fetch(url, controller ? { signal: controller.signal } : undefined);
-      if (!response.ok) throw new Error(`Place lookup failed with status ${response.status}`);
-      place = placeFromAddress(await response.json());
+      place = placeFromAddress(await fetchJsonWithin(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&addressdetails=1&accept-language=en&lat=${fix.lat}&lon=${fix.lng}`, 8000));
     } catch (error) {
       place = '';
-    } finally {
-      clearTimeout(timer);
+    }
+    if (!place && token === locGeoToken) {
+      // Backup service, used only when the first one is busy or unreachable.
+      try {
+        const data = await fetchJsonWithin(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${fix.lat}&longitude=${fix.lng}&localityLanguage=en`, 8000);
+        const parts = [];
+        [data.locality, data.city, data.principalSubdivision].forEach(part => {
+          if (part && !parts.includes(part)) parts.push(part);
+        });
+        place = parts.join(', ');
+      } catch (error) {
+        place = '';
+      }
     }
     if (token !== locGeoToken || !deliveryFix) return;
     deliveryPlace = place;
@@ -686,6 +753,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (first) {
       deliveryPlace = '';
       if (locPlace) locPlace.textContent = 'Finding the place name…';
+      if (locNote) locNote.hidden = !locAuto;
+      writeLocPref('on');
       setLocState('live');
     }
     renderLocation();
@@ -728,6 +797,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function stopLocation() {
     clearLocationWatch();
+    locAutoTried = false;
     locPaused = false;
     locFrozen = false;
     deliveryFix = null;
@@ -737,22 +807,47 @@ document.addEventListener('DOMContentLoaded', () => {
     locGeoToken += 1;
     if (locMap) locMap.removeAttribute('src');
     if (locError) locError.hidden = true;
+    if (locNote) locNote.hidden = true;
     if (locShareText) locShareText.textContent = 'Share my location';
     setLocState('idle');
     updateOrderLink();
   }
 
+  function startLocationSharing(auto) {
+    if (!locSupported) return;
+    if (locError) locError.hidden = true;
+    locFrozen = false;
+    locAuto = auto;
+    setLocState('locating');
+    beginLocationWatch();
+  }
+
+  // If the visitor allowed location before, and the browser still remembers that, sharing starts by
+  // itself when they build an order: no second permission question and no extra tap. They can stop it.
+  function maybeAutoStartLocation() {
+    if (!locSupported || locAutoTried || !locBox || locBox.dataset.state !== 'idle') return;
+    if (deliveryFix || locWatchId !== null || readLocPref() !== 'on' || locPermission !== 'granted') return;
+    if (!orderItems().length) return;
+    locAutoTried = true;
+    startLocationSharing(true);
+  }
+
+  const showBlockedNotice = () => {
+    if (locPermission !== 'denied' || !locError || !locBox || locBox.dataset.state !== 'idle') return;
+    locError.textContent = 'Location is blocked for this site in your browser. You can allow it in the browser settings, or just type your delivery area above.';
+    locError.hidden = false;
+  };
+
   if (locBox) {
     if (!locSupported) {
       locBox.hidden = true;
     } else {
-      locEl('locShare').addEventListener('click', () => {
-        if (locError) locError.hidden = true;
-        locFrozen = false;
-        setLocState('locating');
-        beginLocationWatch();
+      locEl('locShare').addEventListener('click', () => startLocationSharing(false));
+      // Pressing Stop is a decision: next time the visitor has to ask for sharing again.
+      locEl('locStop').addEventListener('click', () => {
+        writeLocPref('off');
+        stopLocation();
       });
-      locEl('locStop').addEventListener('click', stopLocation);
       // Once the order is sent the position stops being followed; it stays in the message.
       if (orderSend) {
         orderSend.addEventListener('click', () => {
@@ -774,6 +869,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       window.addEventListener('pagehide', clearLocationWatch);
+      if (navigator.permissions && typeof navigator.permissions.query === 'function') {
+        navigator.permissions.query({ name: 'geolocation' }).then(status => {
+          locPermission = status.state;
+          status.onchange = () => {
+            locPermission = status.state;
+            showBlockedNotice();
+            maybeAutoStartLocation();
+          };
+          showBlockedNotice();
+          maybeAutoStartLocation();
+        }).catch(() => { /* some browsers do not support this check; the button still works */ });
+      }
     }
   }
 
